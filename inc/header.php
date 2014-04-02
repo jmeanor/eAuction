@@ -16,6 +16,7 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
   require_once("db.php");
   require_once("functions.php");
 }
+  
 
 
 ?>
@@ -61,16 +62,7 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
           <a class="navbar-brand" href="<?php echo $path; ?>home.php">eAuction</a>
         </div>
         <div class="navbar-collapse collapse">
-          <?php // Perform session check to display either login form or links, but not both ?>
-          <form class="navbar-form navbar-right" role="form">
-            <div class="form-group">
-              <input type="text" placeholder="Username" class="form-control input-sm">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control input-sm">
-            </div>
-            <button type="submit" class="btn btn-success btn-sm">Sign in</button>
-          </form>
+        <?php if (isLoggedIn()) {?>
           <ul class="nav navbar-nav pull-right">
                 <li><a href="<?php echo $path; ?>home.php">Home</a>
                 </li>
@@ -81,10 +73,12 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
                 <li><a href="<?php echo $path; ?>user/logout.php">Logout</a>
                 </li>
             </ul>
+          <?php } ?>
         </div><!--/.navbar-collapse -->
       </div>
     </div>
 
+    <?php if (isLoggedIn()) { ?>
     <!-- Query Bar -->
     <div class="container">
       <div class="row">
@@ -106,3 +100,4 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
         <div class="col-md-1"></div>
     </div>
     <hr />
+    <?php } ?>

@@ -4,9 +4,11 @@
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor
-
-
+    require_once("inc/functions.php");
+    checkPermissions();
+    
     require_once("inc/header.php");
+
   
 ?>
 
@@ -14,7 +16,7 @@
         <div class="jumbotron hero-spacer">
             <h1>Welcome to eAuction!</h1>
             <p>We're the most user-friendly auction website there is since 2014. Search for what you want to buy above, <a href="#">shop by category</a>, or check out the featured items below. </p>
-            <p><a class="btn btn-primary btn-large">Sign up!</a>
+            <p><a class="btn btn-primary btn-large">Sign up!</a> 
             </p>
         </div>
 

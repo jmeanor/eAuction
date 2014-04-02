@@ -1,7 +1,7 @@
 <?php 
 
     // First we execute our common code to connection to the database and start the session 
-    require("../inc/db.php");
+    require("inc/db.php");
 
      
     // This variable will be used to re-display the user's username to them in the 
@@ -85,8 +85,8 @@
             $_SESSION['user'] = $row; 
              
             // Redirect the user to the private members-only page. 
-            header("Location: ../home.php"); 
-            die("Redirecting to: ../home.php"); 
+            header("Location: home.php"); 
+            die("Redirecting to: home.php"); 
         } 
         else 
         { 
@@ -102,7 +102,7 @@
         } 
     } 
      
-     require("../inc/header.php"); 
+     require("inc/header.php"); 
 
 ?> 
     <style type="text/css">
@@ -151,14 +151,9 @@
 </head>
 <body>
     <div class="container">
-        
-      <form class="form-signin" action="login.php" method="POST">
+        <?php if (isset($_POST['message'])) echo $_POST['message']; ?>
+      <form class="form-signin" action="index.php" method="post">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <?php if (isset($_POST['message'])){ ?>
-            <div class="alert alert-danger">
-            <?php echo $_POST['message']; ?>
-            </div>
-        <?php } ?>
         <input type="text" name="username" class="form-control" placeholder="Username" value="<?php echo $submitted_username; ?>" autofocus>
         <input type="password" name="password" class="form-control" placeholder="Password">
        
