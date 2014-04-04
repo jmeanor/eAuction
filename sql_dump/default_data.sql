@@ -1,10 +1,7 @@
-SET storage_engine=INNODB;
-
 CREATE TABLE users (
     user_id INTEGER AUTO_INCREMENT,
     username VARCHAR(255) NOT NULL,
-    password CHAR(64) NOT NULL,
-	salt CHAR(16) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     name VARCHAR(255),
     email VARCHAR(255),
     phone_number CHAR(10),
@@ -172,17 +169,17 @@ CREATE TABLE won_items (
         ON DELETE NO ACTION
 );
 
-INSERT INTO users (username, password, salt, name, email, phone_number, description, public_location, url, user_type) VALUES
-('zdeer1', 'b069bcb42b80b00a26a366ea6080928ea0e093c4cc9b30db043820c1c5208e97', '939730c1b8572dc', 'Zachary Deering', 'zpd5008@psu.edu', '8144040751', '', '', '', 'person'), /*user_id = 1 */
-('tjbyrne', '0620dc9dfeb19183b7900c2300e383ce59e8a5107920633279d96828eefde256', '247bc13449b21fdd', 'Tom Byrne', 'tjbyrne2@gmail.com', '5164245787', '', '', '', 'person'), /* user_id = 2 */
-('jmeanor', 'b794613dc6b7f87eb041a6b7f9ac8f01679695640b63941058e8fc269aec0664', '5f627b183bbb3703', 'John Meanor', 'jmeanor@gmail.com', '7246018842', '', '', '', 'person'), /* user_id = 3 */
-('lkeniston', 'af55358a59b0c488163a9bff7c7e688ec4efc0540bb361898ff6829a09f97f17', 'bf1036950723763', 'Luke Keniston', 'lkeniston@gmail.com', '9739608048', '', '', '', 'person'), /* user_id = 4 */
-('beckymapes', '47127b16141afeb74245b7c2fdeb2e9c5d00af1d4aeacfeba0ce80673fc74d86', '2b863f705537feac', 'Becky Mapes', 'bmapes@psu.edu', '8141234567', '', '', '', 'person'), /* user_id = 5 */
-('gad157', '68e573b8a62e00330ce69fb6da4bb96eaebc71bddf2b62e8f5863438b2174153', '7ed9bc011cb5b561', 'Greg Drane', 'gad157@psu.edu', '8147771234', '', '', '', 'person'), /* user_id = 6 */
-('psu', '1407f6d84960d9a783ad6409985b38f50c32f3bbbaa2e66c71e3f3234ca5d1a0', '712300c35f6f1b18', 'Pennsylvania State University', 'eauction@psu.edu', '8148651234', 'The Pennsylvania State University is a public land-grant university in Pennsylvania', 'University Park, PA', 'http://www.psu.edu', 'company'), /* user_id = 7 */
-('lhmartin', '05d6763da8ed6119eb367d7dd2f93f5ddec7b9a1afa6bf597c8d281cda7060b2', '7e8990d753ccf84e', 'Lockheed Martin', 'eauction@lockheed.com', '9995551234', 'Lockheed Martin is a government contractor', 'Washington, D.C.', 'http://www.lockheed.com/', 'company'), /* user_id = 8 */
-('bsclassic', '9fa9573c0558e8b98a9928b2ce5895b8b02d376002e2f68316961615a64d5be3', '38db6e20c9d7d36', 'Blue Sapphire Classic', 'bluesapphireclassic@gmail.com', '9995551235', 'The Blue Sapphire Classic is a charity organization that funds a scholarship for the Feature Twirler of the Penn State Blue Band', 'University Park, PA', 'http://blueband.psu.edu/bsc/', 'company'), /* user_id = 9 */
-('shweelz', 'cf085414d11cb6140788a1406db14f18701e23562e66b078cb9cc5a59479f7c4', '12a372be1e03d7eb', 'Shane Besong', 'shweelz@aol.com', '8144445555', '', '', '', 'person'); /* user_id = 10 */
+INSERT INTO users (username, password, name, email, phone_number, description, public_location, url, user_type) VALUES
+('zdeer1', 'password', 'Zachary Deering', 'zpd5008@psu.edu', '8144040751', '', '', '', 'person'), /*user_id = 1 */
+('tjbyrne', 'password', 'Tom Byrne', 'tjbyrne2@gmail.com', '5164245787', '', '', '', 'person'), /* user_id = 2 */
+('jmeanor', 'password', 'John Meanor', 'jmeanor@gmail.com', '7246018842', '', '', '', 'person'), /* user_id = 3 */
+('lkeniston', 'password', 'Luke Keniston', 'lkeniston@gmail.com', '9739608048', '', '', '', 'person'), /* user_id = 4 */
+('beckymapes', 'password', 'Becky Mapes', 'bmapes@psu.edu', '8141234567', '', '', '', 'person'), /* user_id = 5 */
+('gad157', 'password', 'Greg Drane', 'gad157@psu.edu', '8147771234', '', '', '', 'person'), /* user_id = 6 */
+('psu', 'password', 'Pennsylvania State University', 'eauction@psu.edu', '8148651234', 'The Pennsylvania State University is a public land-grant university in Pennsylvania', 'University Park, PA', 'http://www.psu.edu', 'company'), /* user_id = 7 */
+('lhmartin', 'password', 'Lockheed Martin', 'eauction@lockheed.com', '9995551234', 'Lockheed Martin is a government contractor', 'Washington, D.C.', 'http://www.lockheed.com/', 'company'), /* user_id = 8 */
+('bsclassic', 'password', 'Blue Sapphire Classic', 'bluesapphireclassic@gmail.com', '9995551235', 'The Blue Sapphire Classic is a charity organization that funds a scholarship for the Feature Twirler of the Penn State Blue Band', 'University Park, PA', 'http://blueband.psu.edu/bsc/', 'company'), /* user_id = 9 */
+('shweelz', 'password', 'Shane Besong', 'shweelz@aol.com', '8144445555', '', '', '', 'person'); /* user_id = 10 */
 
 INSERT INTO addresses (user_id, street, city, state, zip) VALUES 
 ('1', '127 N. Sparks St. Apt. 8', 'State College', 'PA', '16801'),
