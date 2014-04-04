@@ -274,12 +274,242 @@
 	  // // is critical.  The rest of your PHP script will continue to execute and 
 	  // // will be sent to the user if you do not die or exit. 
 	  // die("Redirecting to login.php"); 
-
-
 }
 
+	
+	function getRatingsData($userid, $db) {
+		$data = array();
+		$data['success'] = false;
 
+		$query = " 
+            SELECT i.name, r.item_id, i.seller_id, r.score, r.description, r.seller_response  
+            FROM users u, items i, ratings r
+            WHERE 
+                u.user_id = :userid
+				AND u.user_id = i.seller_id
+				AND i.item_id = r.item_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['user_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No user found with that user id number.";
+			$data['user_data'] = null;
+        	return $data;
+        }
 
+        return $data;
 
+	}
+	
+	function getTwitter($userid, $db) {
+		$data = array();
+		$data['success'] = false;
 
+		$query = " 
+            SELECT sm.username  
+            FROM users u, social_media sm
+            WHERE u.user_id = :userid
+			AND sm.user_id = u.user_id
+			AND sm.sm_type = 'tw'
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch(); 
+		
+        if ($row) {
+        	$data['success'] = true;
+        	$data['user_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No user found with that user id number.";
+			$data['user_data'] = null;
+        	return $data;
+        }
+		
+        return $data;
+		
+	}
+	
+	function getFacebook($userid, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT sm.username  
+            FROM users u, social_media sm
+            WHERE u.user_id = :userid
+			AND sm.user_id = u.user_id
+			AND sm.sm_type = 'fb'
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['user_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No user found with that user id number.";
+			$data['user_data'] = null;
+        	return $data;
+        }
+
+        return $data;
+
+	}	
+	
+	function getYoutube($userid, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT sm.username  
+            FROM users u, social_media sm
+            WHERE u.user_id = :userid
+			AND sm.user_id = u.user_id
+			AND sm.sm_type = 'yt'
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['user_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No user found with that user id number.";
+			$data['user_data'] = null;
+        	return $data;
+        }
+
+        return $data;
+
+	}	
+	
+	function getItemData($userid, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT i.name, i.description, i.starting_price, i.reserve_price
+            FROM users u, items i
+            WHERE u.user_id = :userid
+			AND u.user_id = i.seller_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['user_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No user found with that user id number.";
+			$data['user_data'] = null;
+        	return $data;
+        }
+
+        return $data;
+
+	}
 ?>
