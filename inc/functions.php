@@ -80,7 +80,9 @@
 
 	}
 
-	function register($username, $enteredPassowrd, $email, $name, $phone, $type, $description, $public_location, $url, $db)
+	function register($username, $enteredPassowrd, $email, $name, $phone, $type, $description, $public_location, $url,
+					 $revenue, $category, $poc,
+                              $age, $gender, $income, $db)
 	{
 	  $register_result = array('success' => false);
 
@@ -184,15 +186,44 @@
 	          :username, 
 	          :password, 
 	          :salt, 
-	          :email,
 	          :name,
+	          :email,
 	          :phone_number,
 	          :description,
 	          :public_location,
 	          :url,
 	          :type
-	      ) 
+	      );
 	  "; 
+	  if ($type == "person") {
+	  	$query .= "
+	  		 INSERT INTO people ( 
+	  		 	user_id,
+	  		 	age,
+	  		 	gender,
+	  		 	annual_income
+	  		 ) VALUES (
+				LAST_INSERT_ID(),
+				:age,
+				:gender,
+				:annual_income
+			);
+	  	";
+	  } else if ($type == "company") {
+	  	$query .= "
+	  		 INSERT INTO companies ( 
+	  		 	user_id,
+	  		 	revenue,
+	  		 	category,
+	  		 	point_of_contact
+	  		 ) VALUES (
+				LAST_INSERT_ID(),
+				:revenue,
+				:category,
+				:point_of_contact
+			);
+	  	";
+	  }
 	   
 	  // A salt is randomly generated here to protect again brute force attacks 
 	  // and rainbow table attacks.  The following statement generates a hex 
@@ -234,8 +265,19 @@
 	      ':description'=> $description,
 	      ':public_location'=> $public_location,
 	      ':url'=> $url,
-	      ':type'=> $type,
+	      ':type'=> $type
 	  ); 
+
+	if ($type == "person") {
+		$query_params[':age'] = $age;
+		$query_params[':gender'] = $gender;
+		$query_params[':annual_income'] = $income;
+
+	} else if ($type == "company") {
+		$query_params[':revenue'] = $revenue;
+		$query_params[':category'] = $category;
+		$query_params[':point_of_contact'] = $poc;
+	}
 	   
 	  try 
 	  { 
@@ -251,29 +293,10 @@
 	      die("Failed to run query: " . $ex->getMessage()); 
 	  }
 	  
-	  //$result = login($username, $enteredPassword, $db);
-
-	  // if (isset($result['user']))
-	  // {
-	  //   $register_result = array('success' => true, 'user' => $result['user']);
-	  //   return $register_result; 
-	  // }
-	  // else 
-	  // {
-	  //   $register_result = array('success' => false, 'message' => 'Register + Login Failure', 'submitted_username' => $submitted_username);
-	  //   return $register_result;
-	  // }
 
 	  $register_result = array ('success' => true);
 	  return $register_result;
 
-	  // // This redirects the user back to the login page after they register 
-	  // header("Location: login.php"); 
-	   
-	  // // Calling die or exit after performing a redirect using the header function 
-	  // // is critical.  The rest of your PHP script will continue to execute and 
-	  // // will be sent to the user if you do not die or exit. 
-	  // die("Redirecting to login.php"); 
 }
 
 	
