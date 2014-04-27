@@ -535,4 +535,48 @@
         return $data;
 
 	}
+   
+   function uploadFile($fieldName)
+   {      
+      $_UPLOAD_URL = $_SERVER['DOCUMENT_ROOT'] . "/eAuction/shop/images";
+         
+      if(!isset($_FILES[$fieldName]))
+      {
+         return false;
+      }
+      // Ensure the file exists
+      if($_FILES[$fieldName]['error'] > 0)
+      {
+         return false;
+      }
+      else
+      {
+         // Split by Slash
+         $fullName = explode('/', $_FILES[$fieldName]['name']);
+         $n = count($fullName)-1; // File name will be at the end of the array
+         
+         // Up to this point, if the function is still going, no errors have been found with the file, so now it's time to upload it
+         $newName = uniqid() . "-" . $fullName[$n];
+         $destination = $_UPLOAD_URL . "/$newName"; // uniqid generates a random string to add to the name of the file to protect against duplicates
+         $deststring = "images/$newName";
+         
+         // Ensure the destination directory exists
+         if(!is_dir($_UPLOAD_URL))
+         {
+            // Create the directory with the permissions already set so PHP can write to it
+            mkdir($_UPLOAD_URL, 0755);
+         }
+         
+         // Move the file
+         if(move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination))
+         {
+            // Return the location of the new file
+            return $deststring;
+         }
+         else
+         {
+            return false;
+         }
+      }
+   }
 ?>
