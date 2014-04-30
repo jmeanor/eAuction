@@ -10,7 +10,17 @@
 	
 	$test = itemInfo($item_id, $db);
 	$pics = getPics($item_id, $db);
+	$total_bought = itemsBought($test['item_data']['seller_id'], $db);
+    $item_count = getItemCount($test['item_data']['seller_id'], $db);
 ?>
+
+<style type="text/css">
+  body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #eee;
+  }
+</style>
 
     <div class="container">
       <div class="row">
@@ -33,9 +43,23 @@
         <div class="col-lg-1"></div>
         <div class="col-lg-3">
           <center>
-            <img class="img-thumbnail" height="200" width="200" src="<?php $pics['picture_data']['url']?>" alt="Generic placeholder image">
+			  <?php if (!empty($pics['picture_data']))
+			  { 
+			  ?>    
+					<ul class="pagination">	
+					<?php foreach ($pics['picture_data'] as $sm_info)
+					{
+					?>
+						<img src="../<?php echo $sm_info['url']?>" height="200" width="200">
+						<li class="active"><a href="#"><span class="sr-only">(current)</span></a></li>
+						
+					<?php
+					}
+			  }
+			  ?>
+			             <img src="../<?php echo $pics['picture_data']['url']?>" height="200" width="200">
             <ul class="pagination">
-              <li class="active"><a href="<?php echo $pics['picture_data']['url']?>">1 <span class="sr-only">(current)</span></a></li>
+              <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
               <li class="disabled"><a href="#">2</a></li>
               <li class="disabled"><a href="#">3</a></li>
               <li class="disabled"><a href="#">4</a></li>
@@ -46,7 +70,6 @@
         <div class="col-lg-5">
           <h2><b>Current Bid</b>: $<?php echo $test['item_data']['buy_it_now_price']?> <!--<span class="badge">12</span><br />--></h2>
           <h2><b>Buy it Now Price:</b> $<?php echo $test['item_data']['buy_it_now_price']?></h2>
-		  <h2><b>Reserve Price:</b> $<?php echo $test['item_data']['reserve_price']?></h2>
           <h1></h1>
           <center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php?id=<?php echo $item_id ?>" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
           <br/>
@@ -54,11 +77,23 @@
         </div>
         <div class="col-lg-2">
           <h4>Seller Info</h4>
-          <p><a><?php echo $test['item_data']['username']?></a></p>
-          <p>Items Sold: 254</p>
-          <p>Items Bought: 14</p>
-          <p><?php echo $test['item_data']['public_location']?></p>
-          <p><button type="button" class="btn btn-sm btn-default">Contact Seller</button></p>
+          <p><b><?php echo $test['item_data']['username']?></b></p>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Bought: <?php echo $total_bought['bid_data']['bids_won_count']?></p>
+		  <?php
+		  }
+		  ?>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Sold: <?php echo $item_count['user_data']['COUNT(u.user_id)'] ?></p>
+		  <?php
+		  }
+		  ?>          
+		  <p><?php echo $test['item_data']['public_location']?></p>
+          <p><a class="btn btn-default btn-xs" class="btn btn-primary" href="../user/profile.php?id=<?php echo $test['item_data']['seller_id']?>" role="button">View Profile &raquo;</a></p>
 
 
         </div>

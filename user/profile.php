@@ -30,48 +30,56 @@
     <div class="container">
 
       <?php // Check for error to display, else, display the profile data 
-            if (!$data['success'] ) { ?>
-        <div class="alert alert-danger"><?php echo $data['message']; ?></div>
+            if (!$data['success'] ) 
+			{ ?>
+				<div class="alert alert-danger"><?php echo $data['message']; ?></div>
       <?php } else { ?>
 
       <div class="row">
         <div class="col-lg-12">
           <h1><?php echo $data['user_data']['name'] ?></h1>
-          <h3><span class="glyphicon glyphicon-user"></span> <?php echo $data['user_data']['username'] ?></h3>
+          <h3><span class="glyphicon glyphicon-user"></span> <?php echo $data['user_data']['username'] ?>
+		  <?php if (!empty($_SESSION['user']['user_id'])) 
+		  { ?>
+			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Information &raquo;</a>
+		  <?php 
+		  } 
+		  ?>
+		  </h3>
           <hr />
-       </div>
-     </div><!-- /row -->
+        </div>
+      </div><!-- /row -->
 
       <div class="row">
 
-	  <?php if (!empty($sm_data['sm_data'][0]['username']))
+	  <?php if (!empty($sm_data))
 	  { 
 	  ?>        
-			<div class="col-lg-4">
-	        <h3><span class="glyphicon glyphicon-comment"></span> <?php echo $data['user_data']['username'] ?>'s Social Media </h3>
-			<hr>
+		<div class="col-lg-4">
+	    <h3><span class="glyphicon glyphicon-comment"></span> <?php echo $data['user_data']['username'] ?>'s Social Media </h3>
+		<hr>
 			
-			<?php foreach ($sm_data['sm_data'] as $sm_info)
+		<?php foreach ($sm_data['sm_data'] as $sm_info)
+		{
+			if ($row['sm_data']['sm_type'] = "tw")
 			{
-				if ($row['sm_data']['sm_type'] = "tw")
-				{
-				?>
-					<p><b>Twitter: </b> <?php echo $sm_info['username']?></p>
-				<?php
-				}
-				
-				else if ($row['sm_data']['sm_type'] = "fb")
-				{
-				?>
-					<p><b>Facebook: </b> <?php echo $sm_info['username']?></p>
+			?>
+				<p><b>Twitter: </b> <?php echo $sm_info['username']?></p>
 			<?php
-				}
 			}
+			
+			else if ($row['sm_data']['sm_type'] = "fb")
+			{
+			?>
+				<p><b>Facebook: </b> <?php echo $sm_info['username']?></p>
+		<?php
+			}
+		}
 	  }
 	  ?>
-        </div>
+      </div>
 
-      <?php if (!empty($ratings_score['ratings_data']['avg_rating']))
+      <?php if (!empty($ratings_score))
 		{
 		?>
 			<div class="col-lg-4">
@@ -82,7 +90,7 @@
 			</div>
 	  <?php
 		}
-	  ?>
+	    ?>
         
         <div class="col-lg-4">
           <h3><span class="glyphicon glyphicon-info-sign"></span> <?php echo $data['user_data']['username'] ?>'s Contact Information</h3>
@@ -94,13 +102,14 @@
         </div>
       </div>
 
-	  <?php if (!empty($item_data['item_data'][0]['name']))
+	  <?php if (!empty($item_data))
 	  {
 	  ?>
 	    <div class="row">
         <div class="col-lg-1"></div>
         <div class="col-lg-9">
-          <h3><span class="glyphicon glyphicon-shopping-cart"></span> <?php echo $data['user_data']['username'] ?>'s Items for Sale</h3>
+          <h3><span class="glyphicon glyphicon-shopping-cart"></span> <?php echo $data['user_data']['username'] ?>'s Items for Sale <a class="btn btn-default btn-xs" href="../user/userItems.php?id=<?php echo $data['user_data']['user_id']?>" name="option1" role="button">See all &raquo;</a></h3>
+
           <hr>
           </div>
         <div class="col-lg-1"></div>
@@ -126,7 +135,7 @@
 			<div class='col-lg-2'></div>
 		</div>
 
-	  <?php if (!empty($ratings_data['ratings_data'][0]['name']))
+	  <?php if (!empty($ratings_data))
 	  {
 	  ?>
 	    <div class="row">

@@ -393,7 +393,7 @@
 		$data['success'] = false;
 
 		$query = " 
-            SELECT AVG(r.score)  
+            SELECT AVG(r.score) AS avg_rating 
             FROM users u, items i, ratings r
             WHERE 
                 u.user_id = :userid
@@ -441,10 +441,11 @@
 
 		$query = " 
             SELECT COUNT(u.user_id)  
-            FROM users u, items i
+            FROM users u, won_items w, items i
             WHERE 
                 u.user_id = :userid
 				AND u.user_id = i.seller_id
+				AND i.item_id = w.item_id
         "; 
          
         // The parameter values 
@@ -551,10 +552,10 @@
         } 
          
          
-        $row = $stmt->fetch(); 
+        $row = $stmt->fetchAll(); 
         if ($row) {
         	$data['success'] = true;
-        	$data['user_data'] = $row;
+        	$data['picture_data'] = $row;
         }
         else{
         	$data['success'] = false;
@@ -617,7 +618,7 @@
 		$data['success'] = false;
 
 		$query = " 
-            SELECT i.item_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location
+            SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.username, u.public_location
             FROM items i, users u
             WHERE i.item_id = :item_id
 			AND i.seller_id = u.user_id
@@ -846,6 +847,53 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
 			$max_price = '0.00';
         }
         return $max_price;
+	}
+	
+	function itemsBought($user_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT COUNT(w.winning_bid) as bids_won_count
+            FROM won_items w, users u, bids b, credit_cards c
+            WHERE u.user_id = :user_id
+			AND w.winning_bid = b.bid_id
+			AND c.card_id = b.card_id
+			AND c.user_id = u.user_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':user_id' => $user_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch();
+        if ($row) {
+        	$data['success'] = true;
+        	$data['bid_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No item found with that item id number.";
+			$data['bid_data'] = null;
+        	return $data;
+        }
+        return $data;	
 	}
 	
 	function numBids($item_id, $db)
