@@ -71,8 +71,15 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
                 </li>
                 <li><a href="<?php echo $path; ?>user/profile.php">Profile</a>
                 </li>
+                <?php if(isAdmin()) { ?>
+                <li><a href="<?php echo $path; ?>user/report.php">Telemarketer Report</a>
+                </li>
+                <li><a href="<?php echo $path; ?>user/stats.php">Stats</a>
+                </li>
+                <?php } ?>
                 <li><a href="<?php echo $path; ?>user/logout.php">Logout</a>
                 </li>
+
             </ul>
           <?php } ?>
         </div><!--/.navbar-collapse -->

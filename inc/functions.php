@@ -14,6 +14,15 @@
 			return true;
 	}
 
+	function isAdmin() {
+		if(empty($_SESSION['user'])) 
+			return false;
+		if ($_SESSION['user']['admin'])
+			return true;
+		else 
+			return false;
+	}
+
 	function checkPermissions() 
 	{
 		if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE || 
@@ -33,6 +42,42 @@
 			// people can view your members-only content without logging in. 
 			die("Redirecting to user/login.php"); 
 		} 
+	}
+	function getReport($db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT u.name, u.email, u.phone_number, u.public_location, p.age, p.gender, p.annual_income
+			FROM users u
+			JOIN people p ON u.user_id = p.user_id
+        "; 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute(); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+
+        $row = $stmt->fetchAll(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No report data found!";
+			$data['data'] = null;
+        	return $data;
+        }
+
+        return $data;
+
 	}
 
 	function getProfileData($userid, $db) {
