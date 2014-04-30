@@ -1,7 +1,7 @@
 <?php 
-    // Title:       home.php
-    // Desc:        Main display for logged in users.
-    // Date:        March 22, 2014
+    // Title:       stats.php
+    // Desc:        Admin page to view overall system stats.
+    // Date:        April 30, 2014
     // Version:     1.0
     // Author:      John Meanor
     require_once("../inc/functions.php");

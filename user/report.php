@@ -1,6 +1,6 @@
 <?php 
-    // Title:       home.php
-    // Desc:        Main display for logged in users.
+    // Title:       report.php
+    // Desc:        Used for admins to send a report to telemarketers.
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor

@@ -44,6 +44,71 @@
 		} 
 	}
 
+	function markShipped($item_id, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT item_id
+            FROM won_items
+			WHERE item_id = :item_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id 
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+            return false;
+        } 
+
+        $row = $stmt->fetch(); 
+        if (!$row) {
+        	$data['success'] = false;
+        	$data['message'] = "No sold item with that ID #.";
+			$data['data'] = null;
+        	return $data;
+        }
+
+
+		$query = " 
+            UPDATE won_items
+			SET item_sent_date = NOW()
+			WHERE item_id = :item_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id 
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+            return false;
+        } 
+        $data['success'] = true;
+
+        return $data;
+
+	}
+
+
 	function getCategoryStats($db) {
 		$data = array();
 		$data['success'] = false;
