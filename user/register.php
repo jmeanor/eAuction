@@ -8,6 +8,12 @@
   $submitted_description="";
   $submitted_public_loc="";
   $submitted_url="";
+  $submitted_revenue = "";
+  $submitted_category = "";
+  $submitted_poc = "";
+  $submitted_age = "";
+  $submitted_gender = "";
+  $submitted_income = "";
 
 
     // If the user has entered form information to log in with.
@@ -54,6 +60,34 @@
               $fields_ok = false;
           }
         }
+
+
+        if(empty($_POST['description']) || strlen($_POST['description']) < 1 ) 
+        { 
+            $_POST['message']['content'] = "You must enter a personal statement."; 
+            $_POST['message']['type'] = "danger";
+            $fields_ok = false;
+        } else {
+            $submitted_description=$_POST['description'];                
+        }
+
+        if(empty($_POST['public_location'])) 
+        { 
+            $_POST['message']['content'] = "You must enter the location of your company."; 
+            $_POST['message']['type'] = "danger";
+            $fields_ok = false;
+        } else {
+            $submitted_public_loc=$_POST['public_location'];                
+        }
+        if(!filter_var($_POST['url'], FILTER_VALIDATE_URL)) 
+        { 
+            $_POST['message']['content'] = "Please enter a company URL with the full path. Ex: http://www.psu.edu"; 
+            $_POST['message']['type'] = "danger";
+            $fields_ok = false;
+        } else {
+            $submitted_url=$_POST['url'];                
+        }
+        
          
         // Make sure the user entered a valid E-Mail address 
         // filter_var is a useful PHP function for validating form input, see: 
@@ -68,43 +102,70 @@
 
         $isCompany = isset($_POST['isCompany']) && $_POST['isCompany']  ? "1" : "0";
 
-        if (isset($_POST['isCompany'])) {
+        if ($isCompany) {
           // Check company fields
+          if(empty($_POST['revenue'])) 
+          { 
+              $_POST['message']['content'] = "You must enter the annual revenue for your company."; 
+              $_POST['message']['type'] = "danger";
+              $fields_ok = false;
+          } else {
+            $submitted_revenue=$_POST['revenue'];                
+          }
+          if(empty($_POST['category'])) 
+          { 
+              $_POST['message']['content'] = "You must enter a category for your company."; 
+              $_POST['message']['type'] = "danger";
+              $fields_ok = false;
+          } else {
+            $submitted_category=$_POST['category'];                
+          }
+          if(empty($_POST['point_of_contact'])) 
+          { 
+              $_POST['message']['content'] = "You must enter a name for the point of contact for your company."; 
+              $_POST['message']['type'] = "danger";
+              $fields_ok = false;
+          } else {
+            $submitted_poc=$_POST['point_of_contact'];                
+          }
 
-          if(empty($_POST['description']) || strlen($_POST['description']) < 1 ) 
-          { 
-              $_POST['message']['content'] = "You must enter a company description."; 
-              $_POST['message']['type'] = "danger";
-              $fields_ok = false;
-          } else {
-            $submitted_description=$_POST['description'];                
-          }
-          if(empty($_POST['public_location'])) 
-          { 
-              $_POST['message']['content'] = "You must enter the location of your company."; 
-              $_POST['message']['type'] = "danger";
-              $fields_ok = false;
-          } else {
-            $submitted_public_loc=$_POST['public_location'];                
-          }
-          if(!filter_var($_POST['url'], FILTER_VALIDATE_URL)) 
-          { 
-              $_POST['message']['content'] = "Please enter a company URL with the full path. Ex: http://www.psu.edu"; 
-              $_POST['message']['type'] = "danger";
-              $fields_ok = false;
-          } else {
-            $submitted_url=$_POST['url'];                
-          }
           $type = "company";
-        }
-        else{
-          $type = "";
+        } else {
+          if(empty($_POST['age']) || $_POST['age'] < 1) 
+          { 
+              $_POST['message']['content'] = "You must enter your age."; 
+              $_POST['message']['type'] = "danger";
+              $fields_ok = false;
+          } else {
+            $submitted_age=$_POST['age'];                
+          }
+          if(empty($_POST['gender'])) 
+          { 
+              $_POST['message']['content'] = "You must choose a gender."; 
+              $_POST['message']['type'] = "danger";
+              $fields_ok = false;
+          } else {
+            $submitted_gender=$_POST['gender'];                
+          }
+          if(empty($_POST['annual_income']) || $_POST['annual_income'] < 1) 
+          { 
+              $_POST['message']['content'] = "You must enter your annual income."; 
+              $_POST['message']['type'] = "danger";
+              $fields_ok = false;
+          } else {
+            $submitted_income=$_POST['annual_income'];                
+          }
+          $type = "person";
         }
 
 
         if($fields_ok) {
             
-            $result = register($_POST['username'], $_POST['password'], $_POST['email'], $_POST['name'], $phone, $type, $submitted_description, $submitted_public_loc, $submitted_url, $db);
+            $result = register($_POST['username'], $_POST['password'], $_POST['email'], $_POST['name'], $phone, $type, 
+                              $submitted_description, $submitted_public_loc, $submitted_url,
+                              $submitted_revenue, $submitted_category, $submitted_poc,
+                              $submitted_age, $submitted_gender, $submitted_income,
+                               $db);
 
               $submitted_username = ''; 
 
@@ -174,7 +235,7 @@
     border-bottom-right-radius: 0;
   }
   .form-signin input[type="password"] {
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
@@ -196,23 +257,44 @@
             <input class="form-control" type="text" name="email" placeholder="Email" value="" />
             <input class="form-control" type="text" name="phone_number" placeholder="Phone Number" value="<?php echo $submitted_phone; ?>" /> 
             <input class="form-control"  rows="4" type="password" name="password" placeholder="Password" value="">
-            <p><input id="isCompany"  type="checkbox" name="isCompany" value="1"/> I'm a corporate user. <span class="glyphicon glyphicon-briefcase"></span></p>
-
+            <textarea class="form-control" name="description" placeholder="Enter a brief personal statement here." value="<?php echo $submitted_description; ?>"></textarea>
+            <input class="form-control" type="text" name="public_location" placeholder="University Park, PA" value="<?php echo $submitted_public_loc; ?>" />
+            <input class="form-control" type="text" name="url" placeholder="http://www.psu.edu" value="<?php echo $submitted_url; ?>" /></p>
+            <p><input id="isPerson"  type="radio" name="isCompany" value="0" checked/> I'm registering for personal use. <span class="glyphicon glyphicon-briefcase"></span></p>
+            <p><input id="isCompany" type="radio" name="isCompany" value="1"> I'm registering for corporate use. <span class="glyphicon glyphicon-user"></span></p>
+            
             <div id="companyfields">
-              <p><textarea class="form-control" name="description" placeholder="Enter a brief company description here." value="<?php echo $submitted_description; ?>"></textarea>
-              <input class="form-control" type="text" name="public_location" placeholder="University Park, PA" value="<?php echo $submitted_public_loc; ?>" />
-              <input class="form-control" type="text" name="url" placeholder="http://www.psu.edu" value="<?php echo $submitted_url; ?>" /></p>
+              <label for="revenue">Annual Revenue $</label>
+              <input id="revenue" type="number" name="revenue" min="1" />
+              <input id="category" class="form-control" type="text" name="category" placeholder="Industry" />
+              <input id="point_of_contact" class="form-control" type="text" name="point_of_contact" placeholder="Point of Contact Name" />
             </div>
 
-            <button  class="btn btn-lg btn-primary btn-block" type="submit">Register</button> 
+            <div id="personfields">
+              <label for="age">Age</label>
+              <input id="age" type="number" name="age" min="1"/>
+              <label for="annual_income">Annual Income $</label>
+              <input id="annual_income" type="number" name="annual_income" min="1" />
+              <p><input id="gender_m" class="" type="radio" name="gender" value="M" checked /> M <input id="gender_F" class="" type="radio" name="gender" value="F" checked /> F</p>
+            </div>
+            <br />
+            <button  class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+            <a href="login.php" class="btn btn-lg btn-block btn-default">Log In </a>
         </form>
       </div>
 
 
       <script>
         $("#companyfields").hide();
+
         $( "#isCompany" ).on( "click", function() {
-          $( "#companyfields" ).toggle("fast");   
+          $( "#companyfields" ).show("fast");
+          $("#personfields").hide("fast");   
+        });
+
+        $( "#isPerson" ).on( "click", function() {
+          $( "#companyfields" ).hide("fast");
+          $("#personfields").show("fast");   
         });
       </script>
 
