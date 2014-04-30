@@ -345,6 +345,48 @@
         return $data;
 	}
 	
+	function getCards($userid, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		// Query to gather ratings information
+		$query = " 
+            SELECT card_id, card_type, card_number, expiration
+			FROM credit_cards
+			WHERE user_id = :userid
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+        
+        $row = $stmt->fetchAll(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['card_data'] = $row;
+        }
+		
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No ratings found for that user.";
+			$data['card_data'] = null;
+        	return $data;
+        }
+        return $data;
+	}
+	
 	// Function to find the average rating score for a user
 	function getRatingScore($userid, $db) {
 		$data = array();
@@ -854,77 +896,16 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
 	  return $item_result;
 }
 
-function submit_bid($item_id, $buyer_id, $score, $description, $db)
-	{
-	  $item_result = array('success' => false);
-	   
-	  // An INSERT query is used to add new rows to a database table. 
-	  // Again, we are using special tokens (technically called parameters) to 
-	  // protect against SQL injection attacks. 
-	  $query = " 
-	      INSERT INTO bids (
-			  seller_id,
-	          name, 
-	          description, 
-	          starting_price, 
-	          buy_it_now_price,
-			  reserve_price,
-	          location,
-			  url,
-			  template
-			  
-	      ) VALUES ( 
-			  :user_id,
-	          :item_name, 
-	          :item_description, 
-	          :starting_price, 
-	          :buy_it_now_price,
-			  :reserve_price,
-	          :location,
-			  :url,
-			  :template
-	      ) 
-	  "; 
-	  $query_params = array( 
-		  ':user_id' => $user_id,
-	      ':item_name' => $item_name, 
-	      ':item_description' => $item_description, 
-	      ':starting_price'=> $starting_price,
-	      ':buy_it_now_price'=> $buy_it_now_price,
-		  ':reserve_price'=> $reserve_price,
-	      ':location'=> $location,
-		  ':url'=> $url,
-		  ':template'=> $template
-	  ); 
-	   
-	  try 
-	  { 
-	      // Execute the query to create the user 
-	      $stmt = $db->prepare($query); 
-	      $result = $stmt->execute($query_params); 
-	  } 
-	  
-	  catch(PDOException $ex) 
-	  {   
-	      // TODO:
-	      // Note: On a production website, you should not output $ex->getMessage(). 
-	      // It may provide an attacker with helpful information about your code.  
-	      die("Failed to run query: " . $ex->getMessage()); 
-	  }
-	  $item_result = array ('success' => true);
-	  return $item_result;
-}
-
 	function highestBid($item_id, $db)
 	{
 		$data = array();
 		$data['success'] = false;
 
 		$query = " 
-            SELECT MAX(b.bid_id), b.price
-            FROM bids b, items i
-            WHERE i.item_id = :item_id
-			AND i.item_id = b.item_id
+            SELECT MAX(price) as max_price
+            FROM bids
+            WHERE item_id = :item_id
+			
         "; 
          
         // The parameter values 
@@ -947,16 +928,45 @@ function submit_bid($item_id, $buyer_id, $score, $description, $db)
         // they entered is not registered. 
         $row = $stmt->fetch();
         if ($row) {
-        	$data['success'] = true;
-        	$data['item_data'] = $row;
+        	$max_price = $row['max_price'];
+			if($max_price == '')
+				$max_price = '0.00';
         }
         else{
-        	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['item_data'] = null;
-        	return $data;
+			$max_price = '0.00';
         }
-        return $data;
+        return $max_price;
+	}
+	
+	function numBids($item_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+		$query = "SELECT COUNT(*) as count 
+				  FROM bids 
+				  WHERE item_id=:item_id";
+		$query_params = array(':item_id'=>$item_id);
+		
+		try 
+		{ 
+			// Execute the query against the database 
+			$stmt = $db->prepare($query); 
+			$result = $stmt->execute($query_params); 
+		} 
+		catch(PDOException $ex) 
+		{ 
+			die($ex);
+		} 
+		$row = $stmt->fetch();
+		if ($row)
+		{
+			$count = $row['count'];
+		}
+		else
+		{
+			$count = 0;
+		}
+		return $count;
 	}
 	
 	   function uploadFile($fieldName)

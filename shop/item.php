@@ -6,8 +6,10 @@
     // Author:      John Meanor
 
     require_once("../inc/header.php");
-	$test = itemInfo($_SESSION['item_id'], $db);
-	$pics = getPics($_SESSION['item_id'], $db);
+	$item_id = $_GET['id'];
+	
+	$test = itemInfo($item_id, $db);
+	$pics = getPics($item_id, $db);
 ?>
 
     <div class="container">
@@ -46,7 +48,7 @@
           <h2><b>Buy it Now Price:</b> $<?php echo $test['item_data']['buy_it_now_price']?></h2>
 		  <h2><b>Reserve Price:</b> $<?php echo $test['item_data']['reserve_price']?></h2>
           <h1></h1>
-          <center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
+          <center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php?id=<?php echo $item_id ?>" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
           <br/>
           <p><?php echo $test['item_data']['description']?></p>
         </div>
