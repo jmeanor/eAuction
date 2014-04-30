@@ -27,7 +27,6 @@
 	  $sm_data = getSocialMedia($_SESSION['user']['user_id'], $db);
     }
 ?>
-
     <div class="container">
 
       <?php // Check for error to display, else, display the profile data 
@@ -72,15 +71,15 @@
 	  ?>
         </div>
 
-      <?php if (!empty($ratings_score['ratings_data']['COUNT(u.user_id)']))
+      <?php if (!empty($ratings_score['ratings_data']['avg_rating']))
 		{
 		?>
-		<div class="col-lg-4">
-          <h3><span class="glyphicon glyphicon-thumbs-up"></span> <?php echo $data['user_data']['username'] ?>'s Feedback</h3>
-		  <hr>
-          <p><b>Score:</b> <?php echo $ratings_score['ratings_data']['AVG(r.score)']?></p>
-		  <p><b>Number of Items Sold: </b> <?php echo $item_count['user_data']['COUNT(u.user_id)'] ?></p>
-        </div>
+			<div class="col-lg-4">
+			  <h3><span class="glyphicon glyphicon-thumbs-up"></span> <?php echo $data['user_data']['username'] ?>'s Feedback</h3>
+			  <hr>
+			  <p><b>Score:</b> <?php echo number_format(($ratings_score['ratings_data']['avg_rating']), 2)?></p>
+			  <p><b>Number of Items Sold: </b> <?php echo $item_count['user_data']['COUNT(u.user_id)'] ?></p>
+			</div>
 	  <?php
 		}
 	  ?>
@@ -118,7 +117,7 @@
 					  <div class="col-lg-3">
 						<h3><?php echo $item_data['item_data'][$i]['name'] ?></h3>
 						<p><?php echo $item_data['item_data'][$i]['description']?></p>
-						<p><a class="btn btn-default btn-xs" href="../shop/item.php?item_id=<?php echo $item_data['item_data'][$i]['item_id']?>" name="option1" role="button">View details &raquo;</a></p>
+						<p><a class="btn btn-default btn-xs" href="../shop/item.php?id=<?php echo $item_data['item_data'][$i]['item_id']?>" name="option1" role="button">View details &raquo;</a></p>
 					  </div>
 		<?php
 			}
