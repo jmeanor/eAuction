@@ -11,60 +11,24 @@
     require_once("../inc/header.php");
 
     if (!empty($_GET['userid'])) {
-      // Get profile information
 	  $data = getProfileData($_GET['userid'], $db);
-	  
-	  // Get item information
 	  $item_data = getItemData($_GET['userid'], $db);
-	  
-	  // Get rating information
 	  $ratings_data = getRatingsData($_GET['userid'], $db);
 	  $ratings_score = getRatingScore($_GET['userid'], $db);
 	  $item_count = getItemCount($_GET['userid'], $db);
-	  // Get social media information
-	  $tw_data = getTwitter($_GET['userid'], $db);
-	  $fb_data = getFacebook($_GET['userid'], $db);
-	  $yt_data = getYoutube($_GET['userid'], $db);
+	  $sm_data = getSocialMedia($_GET['userid'], $db);
 	}
     else {
       $data = getProfileData($_SESSION['user']['user_id'], $db);
 	  $item_data = getItemData($_SESSION['user']['user_id'], $db);
 	  $ratings_score = getRatingScore($_SESSION['user']['user_id'], $db);
 	  $ratings_data = getRatingsData($_SESSION['user']['user_id'], $db);
-	  $tw_data = getTwitter($_SESSION['user']['user_id'], $db);
-	  $fb_data = getFacebook($_SESSION['user']['user_id'], $db);
-	  $yt_data = getYoutube($_SESSION['user']['user_id'], $db);
 	  $item_count = getItemCount($_SESSION['user']['user_id'], $db);
-
+	  $sm_data = getSocialMedia($_SESSION['user']['user_id'], $db);
     }
-		
-	if (empty($ratings_data['ratings_data'][0]['score']))
-	{
-		$ratings_data['ratings_data'][0]['name'] = "Unavailable";
-		$ratings_data['ratings_data'][0]['score'] = null;
-		$ratings_data['ratings_data'][0]['description'] = "No description.";
-		$ratings_data['ratings_data'][0]['seller_response'] = "No seller response.";
-	}	
-	
-	if (empty($ratings_data['ratings_data'][1]['score']))
-	{
-		$ratings_data['ratings_data'][1]['name'] = "Unavailable";
-		$ratings_data['ratings_data'][1]['score'] = null;
-		$ratings_data['ratings_data'][1]['description'] = "No description.";
-		$ratings_data['ratings_data'][1]['seller_response'] = "No seller response.";
-	}	
-	
-	if (empty($ratings_data['ratings_data'][2]['score']))
-	{
-		$ratings_data['ratings_data'][2]['name'] = "Unavailable";
-		$ratings_data['ratings_data'][2]['score'] = null;
-		$ratings_data['ratings_data'][2]['description'] = "No description.";
-		$ratings_data['ratings_data'][2]['seller_response'] = "No seller response.";
-	}
 ?>
 
     <div class="container">
-
 
       <?php // Check for error to display, else, display the profile data 
             if (!$data['success'] ) { ?>
@@ -80,21 +44,46 @@
      </div><!-- /row -->
 
       <div class="row">
-        
-        <div class="col-lg-4">
-          <h3><span class="glyphicon glyphicon-comment"></span> <?php echo $data['user_data']['username'] ?>'s Social Media </h3>
-         <hr>
-          <p><b>Twitter:</b> <?php echo $tw_data['user_data']['username']?></p>
-          <p><b>Facebook:</b> <?php echo $fb_data['user_data']['username']?></p>
-          <p><b>YouTube:</b> <?php echo $yt_data['user_data']['username']?></p>
+
+	  <?php if (!empty($sm_data['sm_data'][0]['username']))
+	  { 
+	  ?>        
+			<div class="col-lg-4">
+	        <h3><span class="glyphicon glyphicon-comment"></span> <?php echo $data['user_data']['username'] ?>'s Social Media </h3>
+			<hr>
+			
+			<?php foreach ($sm_data['sm_data'] as $sm_info)
+			{
+				if ($row['sm_data']['sm_type'] = "tw")
+				{
+				?>
+					<p><b>Twitter: </b> <?php echo $sm_info['username']?></p>
+				<?php
+				}
+				
+				else if ($row['sm_data']['sm_type'] = "fb")
+				{
+				?>
+					<p><b>Facebook: </b> <?php echo $sm_info['username']?></p>
+			<?php
+				}
+			}
+	  }
+	  ?>
         </div>
 
-        <div class="col-lg-4">
+      <?php if (!empty($ratings_score['ratings_data']['COUNT(u.user_id)']))
+		{
+		?>
+		<div class="col-lg-4">
           <h3><span class="glyphicon glyphicon-thumbs-up"></span> <?php echo $data['user_data']['username'] ?>'s Feedback</h3>
 		  <hr>
           <p><b>Score:</b> <?php echo $ratings_score['ratings_data']['AVG(r.score)']?></p>
 		  <p><b>Number of Items Sold: </b> <?php echo $item_count['user_data']['COUNT(u.user_id)'] ?></p>
         </div>
+	  <?php
+		}
+	  ?>
         
         <div class="col-lg-4">
           <h3><span class="glyphicon glyphicon-info-sign"></span> <?php echo $data['user_data']['username'] ?>'s Contact Information</h3>
@@ -117,6 +106,7 @@
           </div>
         <div class="col-lg-1"></div>
 		</div>
+		
 	  <?php
 	  }
 	  ?>
@@ -128,45 +118,46 @@
 					  <div class="col-lg-3">
 						<h3><?php echo $item_data['item_data'][$i]['name'] ?></h3>
 						<p><?php echo $item_data['item_data'][$i]['description']?></p>
-						<p><a class="btn btn-default btn-xs" href="../shop/item.php" name="option1" role="button">View details &raquo;</a><?php $_SESSION['item_id'] = $item_data['item_data'][$i]['item_id']?></p>
+						<p><a class="btn btn-default btn-xs" href="../shop/item.php?item_id=<?php echo $item_data['item_data'][$i]['item_id']?>" name="option1" role="button">View details &raquo;</a></p>
 					  </div>
 		<?php
 			}
 		}
 		?>
-					<div class='col-lg-2'></div>
-				</div>
-	  	 
+			<div class='col-lg-2'></div>
+		</div>
 
-	        <div class="row">
+	  <?php if (!empty($ratings_data['ratings_data'][0]['name']))
+	  {
+	  ?>
+	    <div class="row">
         <div class="col-lg-1"></div>
         <div class="col-lg-9">
-          <h3><span class="glyphicon glyphicon-shopping-cart"></span> <?php echo $data['user_data']['username'] ?>'s User Ratings</h3>
+          <h3><span class="glyphicon glyphicon-shopping-cart"></span> <?php echo $data['user_data']['username'] ?>'s Ratings</h3>
           <hr>
           </div>
         <div class="col-lg-1"></div>
-      </div>
+		</div>
+	  <?php
+	  }
+	  ?>
 
-      <div class="row">
-        <div class="col-lg-1"></div>
-          <div class="col-lg-3">
-            <h3><?php echo $ratings_data['ratings_data'][0]['name']?> : <?php echo $ratings_data['ratings_data'][0]['score']?></h3>
-            <p><b>Customer Message: </b><?php echo $ratings_data['ratings_data'][0]['description']?></p>
-            <p><b>Seller Response: </b><?php echo $ratings_data['ratings_data'][0]['seller_response']?></p>
-          </div><!-- /.col-lg-3 -->
-          <div class="col-lg-3">
-			<h3><?php echo $ratings_data['ratings_data'][1]['name']?> : <?php echo $ratings_data['ratings_data'][1]['score']?></h3>
-            <p><b>Customer Message: </b><?php echo $ratings_data['ratings_data'][1]['description']?></p>
-            <p><b>Seller Response: </b><?php echo $ratings_data['ratings_data'][1]['seller_response']?></p>
-          </div><!-- /.col-lg-3 -->
-          <div class="col-lg-3">
-            <h3><?php echo $ratings_data['ratings_data'][2]['name']?> : <?php echo $ratings_data['ratings_data'][2]['score']?></h3>
-            <p><b>Customer Message: </b><?php echo $ratings_data['ratings_data'][2]['description']?></p>
-            <p><b>Seller Response: </b><?php echo $ratings_data['ratings_data'][2]['seller_response']?></p>
-          </div><!-- /.col-lg-3 -->
-        <div class="col-lg-2"></div>
-      </div><!-- /.row -->
-	  
+	  				<div class="row">
+					<div class="col-lg-1"></div>
+	  <?php 
+		for ($i = 0; $i<3; $i++) {
+			if (!empty($ratings_data['ratings_data'][$i]['name'])) { ?>
+					<div class="col-lg-3">
+					<h3><?php echo $ratings_data['ratings_data'][$i]['name']?> : <?php echo $ratings_data['ratings_data'][$i]['score']?></h3>
+					<p><b>Customer Message: </b><?php echo $ratings_data['ratings_data'][$i]['description']?></p>
+					<p><b>Seller Response: </b><?php echo $ratings_data['ratings_data'][$i]['seller_response']?></p>
+					</div>
+		<?php
+			}
+		}
+		?>
+					<div class='col-lg-2'></div>
+				</div>	  
       <?php } ?>
 
       <?php require_once("../inc/footer.php"); ?>

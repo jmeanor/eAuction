@@ -477,16 +477,16 @@
         return $data;
 	}
 	
-	function getTwitter($userid, $db) {
+	function getSocialMedia($userid, $db) {
 		$data = array();
 		$data['success'] = false;
 
 		$query = " 
-            SELECT sm.username  
+            SELECT sm.username, sm.sm_type
             FROM users u, social_media sm
             WHERE u.user_id = :userid
 			AND sm.user_id = u.user_id
-			AND sm.sm_type = 'tw'
+			ORDER BY sm.sm_type
         "; 
          
         // The parameter values 
@@ -507,111 +507,21 @@
          
         // Retrieve the Twitter data from the database.  If $row is false, then the user 
 		// has no Twitter account, and none is shown.
-        $row = $stmt->fetch(); 
+        $row = $stmt->fetchAll(); 
 		
         if ($row) {
         	$data['success'] = true;
-        	$data['user_data'] = $row;
+        	$data['sm_data'] = $row;
         }
         else{
         	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['user_data'] = null;
+        	$data['message'] = "No social media accounts found for user with that id number.";
+			$data['sm_data'] = null;
         	return $data;
         }
 		
         return $data;
 	}
-	
-	function getFacebook($userid, $db) {
-		$data = array();
-		$data['success'] = false;
-
-		$query = " 
-            SELECT sm.username  
-            FROM users u, social_media sm
-            WHERE u.user_id = :userid
-			AND sm.user_id = u.user_id
-			AND sm.sm_type = 'fb'
-        "; 
-         
-        // The parameter values 
-        $query_params = array( 
-            ':userid' => $userid
-        ); 
-         
-        try 
-        { 
-            // Execute the query against the database 
-            $stmt = $db->prepare($query); 
-            $result = $stmt->execute($query_params); 
-        } 
-        catch(PDOException $ex) 
-        { 
-            die($ex);
-        } 
-         
-         
-        // Retrieve the Facebook data from the database.  If $row is false, then the user 
-		// has no Facebook account, and none is shown.
-        $row = $stmt->fetch(); 
-        if ($row) {
-        	$data['success'] = true;
-        	$data['user_data'] = $row;
-        }
-        else{
-        	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['user_data'] = null;
-        	return $data;
-        }
-        return $data;
-	}	
-	
-	function getYoutube($userid, $db) {
-		$data = array();
-		$data['success'] = false;
-
-		$query = " 
-            SELECT sm.username  
-            FROM users u, social_media sm
-            WHERE u.user_id = :userid
-			AND sm.user_id = u.user_id
-			AND sm.sm_type = 'yt'
-        "; 
-         
-        // The parameter values 
-        $query_params = array( 
-            ':userid' => $userid
-        ); 
-         
-        try 
-        { 
-            // Execute the query against the database 
-            $stmt = $db->prepare($query); 
-            $result = $stmt->execute($query_params); 
-        } 
-        catch(PDOException $ex) 
-        { 
-            die($ex);
-        } 
-         
-         
-        // Retrieve the YouTube data from the database.  If $row is false, then the user 
-		// has no YouTube account, and none is shown.
-        $row = $stmt->fetch(); 
-        if ($row) {
-        	$data['success'] = true;
-        	$data['user_data'] = $row;
-        }
-        else{
-        	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['user_data'] = null;
-        	return $data;
-        }
-        return $data;
-	}	
 	
 	function getPics($item_id, $db) {
 		$data = array();
