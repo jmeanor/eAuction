@@ -43,6 +43,87 @@
 			die("Redirecting to user/login.php"); 
 		} 
 	}
+
+	function getCategoryStats($db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT COUNT(w.item_id) as count, c.name as name
+			FROM won_items w
+			JOIN items_in_categories ic ON w.item_id = ic.item_id
+			JOIN categories c ON c.category_id = ic.category_id
+			GROUP BY c.category_id
+			ORDER BY c.category_id asc
+        "; 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute(); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+
+        $row = $stmt->fetchAll(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No won items!";
+			$data['data'] = null;
+        	return $data;
+        }
+
+        return $data;
+
+	}
+
+	function getAverageSale($db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT AVG(b.price) as avg_p, c.name as name
+			FROM bids b
+			JOIN won_items w ON w.winning_bid = b.bid_id
+			JOIN items_in_categories ic ON ic.item_id = w.item_id
+			JOIN categories c ON ic.category_id = c.category_id
+			GROUP BY ic.category_id 
+        "; 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute(); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+
+        $row = $stmt->fetchAll(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "getAverageSale() failed to execute";
+			$data['data'] = null;
+        	return $data;
+        }
+
+        return $data;
+
+	}
+
 	function getReport($db) {
 		$data = array();
 		$data['success'] = false;

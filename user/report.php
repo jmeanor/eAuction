@@ -25,7 +25,7 @@
         $wasMailed = true;
     }
 
-
+    date_default_timezone_set('America/New_York');
     setlocale(LC_MONETARY, 'en_US');
 ?>
 
@@ -73,9 +73,6 @@
             </div>
         </div>
         <!-- /.row -->
-        <?php //mail("jmeanor@gmail.com","eAuction","eAuction has a report ready.",""); ?>
-
-        
 
         <script>
             function printReport()
