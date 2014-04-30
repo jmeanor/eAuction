@@ -188,7 +188,7 @@
             die($ex);
         } 
          
-         
+		 
         // Retrieve the user data from the database.  If $row is false, then the username 
         // they entered is not registered. 
         $row = $stmt->fetch(); 
@@ -201,9 +201,9 @@
         	$data['message'] = "No user found with that user id number.";
         	return $data;
         }
-
+		
         return $data;
-
+		
 	}
 
 	function register($username, $enteredPassowrd, $email, $name, $phone, $type, $description, $public_location, $url,
@@ -424,14 +424,102 @@
 	  return $register_result;
 
 }
-
 	
+	// Get data about ratings
 	function getRatingsData($userid, $db) {
 		$data = array();
 		$data['success'] = false;
 
+		// Query to gather ratings information
 		$query = " 
             SELECT i.name, r.item_id, i.seller_id, r.score, r.description, r.seller_response  
+            FROM users u, items i, ratings r
+            WHERE 
+                u.user_id = :userid
+				AND u.user_id = i.seller_id
+				AND i.item_id = r.item_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+        
+        $row = $stmt->fetchAll(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['ratings_data'] = $row;
+        }
+		
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No ratings found for that user.";
+			$data['ratings_data'] = null;
+        	return $data;
+        }
+        return $data;
+	}
+	
+	function getCards($userid, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		// Query to gather ratings information
+		$query = " 
+            SELECT card_id, card_type, card_number, expiration
+			FROM credit_cards
+			WHERE user_id = :userid
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+        
+        $row = $stmt->fetchAll(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['card_data'] = $row;
+        }
+		
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No ratings found for that user.";
+			$data['card_data'] = null;
+        	return $data;
+        }
+        return $data;
+	}
+	
+	// Function to find the average rating score for a user
+	function getRatingScore($userid, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT AVG(r.score) AS avg_rating 
             FROM users u, items i, ratings r
             WHERE 
                 u.user_id = :userid
@@ -461,29 +549,29 @@
         $row = $stmt->fetch(); 
         if ($row) {
         	$data['success'] = true;
-        	$data['user_data'] = $row;
+        	$data['ratings_data'] = $row;
         }
         else{
         	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['user_data'] = null;
+        	$data['message'] = "No ratings found for that user id number.";
+			$data['ratings_data'] ;
         	return $data;
         }
-
         return $data;
-
 	}
 	
-	function getTwitter($userid, $db) {
+	// Function to get the number of items a user has on sale/sold
+	function getItemCount($userid, $db) {
 		$data = array();
 		$data['success'] = false;
 
 		$query = " 
-            SELECT sm.username  
-            FROM users u, social_media sm
-            WHERE u.user_id = :userid
-			AND sm.user_id = u.user_id
-			AND sm.sm_type = 'tw'
+            SELECT COUNT(u.user_id)  
+            FROM users u, won_items w, items i
+            WHERE 
+                u.user_id = :userid
+				AND u.user_id = i.seller_id
+				AND i.item_id = w.item_id
         "; 
          
         // The parameter values 
@@ -502,36 +590,30 @@
             die($ex);
         } 
          
-         
-        // Retrieve the user data from the database.  If $row is false, then the username 
-        // they entered is not registered. 
         $row = $stmt->fetch(); 
-		
         if ($row) {
         	$data['success'] = true;
         	$data['user_data'] = $row;
         }
         else{
         	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
+        	$data['message'] = "No items found with that user id number.";
 			$data['user_data'] = null;
         	return $data;
         }
-		
         return $data;
-		
 	}
 	
-	function getFacebook($userid, $db) {
+	function getSocialMedia($userid, $db) {
 		$data = array();
 		$data['success'] = false;
 
 		$query = " 
-            SELECT sm.username  
+            SELECT sm.username, sm.sm_type
             FROM users u, social_media sm
             WHERE u.user_id = :userid
 			AND sm.user_id = u.user_id
-			AND sm.sm_type = 'fb'
+			ORDER BY sm.sm_type
         "; 
          
         // The parameter values 
@@ -550,40 +632,38 @@
             die($ex);
         } 
          
-         
-        // Retrieve the user data from the database.  If $row is false, then the username 
-        // they entered is not registered. 
-        $row = $stmt->fetch(); 
+        // Retrieve the Twitter data from the database.  If $row is false, then the user 
+		// has no Twitter account, and none is shown.
+        $row = $stmt->fetchAll(); 
+		
         if ($row) {
         	$data['success'] = true;
-        	$data['user_data'] = $row;
+        	$data['sm_data'] = $row;
         }
         else{
         	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['user_data'] = null;
+        	$data['message'] = "No social media accounts found for user with that id number.";
+			$data['sm_data'] = null;
         	return $data;
         }
-
+		
         return $data;
-
-	}	
+	}
 	
-	function getYoutube($userid, $db) {
+	function getPics($item_id, $db) {
 		$data = array();
 		$data['success'] = false;
 
 		$query = " 
-            SELECT sm.username  
-            FROM users u, social_media sm
-            WHERE u.user_id = :userid
-			AND sm.user_id = u.user_id
-			AND sm.sm_type = 'yt'
+            SELECT p.url  
+            FROM item_pictures p, items i
+            WHERE i.item_id = :item_id
+			AND i.item_id = p.item_id
         "; 
          
         // The parameter values 
         $query_params = array( 
-            ':userid' => $userid
+            ':item_id' => $item_id
         ); 
          
         try 
@@ -598,22 +678,18 @@
         } 
          
          
-        // Retrieve the user data from the database.  If $row is false, then the username 
-        // they entered is not registered. 
-        $row = $stmt->fetch(); 
+        $row = $stmt->fetchAll(); 
         if ($row) {
         	$data['success'] = true;
-        	$data['user_data'] = $row;
+        	$data['picture_data'] = $row;
         }
         else{
         	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['user_data'] = null;
+        	$data['message'] = "No pictures found with that item id number.";
+			$data['picture_data'] = null;
         	return $data;
         }
-
         return $data;
-
 	}	
 	
 	function getItemData($userid, $db) {
@@ -621,10 +697,12 @@
 		$data['success'] = false;
 
 		$query = " 
-            SELECT i.name, i.description, i.starting_price, i.reserve_price
+            SELECT i.item_id, i.name, i.description, i.starting_price, i.reserve_price
             FROM users u, items i
             WHERE u.user_id = :userid
 			AND u.user_id = i.seller_id
+			AND i.item_id NOT IN (SELECT w.item_id
+								  FROM won_items w)
         "; 
          
         // The parameter values 
@@ -646,23 +724,336 @@
          
         // Retrieve the user data from the database.  If $row is false, then the username 
         // they entered is not registered. 
-        $row = $stmt->fetch(); 
+        $row = $stmt->fetchAll();
         if ($row) {
         	$data['success'] = true;
-        	$data['user_data'] = $row;
+        	$data['item_data'] = $row;
         }
         else{
         	$data['success'] = false;
-        	$data['message'] = "No user found with that user id number.";
-			$data['user_data'] = null;
+        	$data['message'] = "No items found.";
+			$data['item_data'] = null;
         	return $data;
         }
-
         return $data;
-
 	}
-   
-   function uploadFile($fieldName)
+	
+	function itemInfo($item_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.username, u.public_location
+            FROM items i, users u
+            WHERE i.item_id = :item_id
+			AND i.seller_id = u.user_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch();
+        if ($row) {
+        	$data['success'] = true;
+        	$data['item_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No item found with that item id number.";
+			$data['item_data'] = null;
+        	return $data;
+        }
+        return $data;
+	}
+	
+	
+	function create_item($user_id, $item_name, $item_description, $starting_price, $buy_it_now_price, $reserve_price, $location, $url, $template, $db)
+	{
+	  $item_result = array('success' => false);
+	  $start_time = date("Y-m-d H:i:s"); 
+	  // An INSERT query is used to add new rows to a database table. 
+	  // Again, we are using special tokens (technically called parameters) to 
+	  // protect against SQL injection attacks. 
+	  $query = " 
+	      INSERT INTO items (
+			  seller_id,
+	          name, 
+	          description, 
+	          starting_price, 
+	          buy_it_now_price,
+			  reserve_price,
+			  start_time,
+	          location,
+			  url,
+			  template
+			  
+	      ) VALUES ( 
+			  :user_id,
+	          :item_name, 
+	          :item_description, 
+	          :starting_price, 
+	          :buy_it_now_price,
+			  :reserve_price,
+			  :start_time,
+	          :location,
+			  :url,
+			  :template
+	      ) 
+	  "; 
+	  $query_params = array( 
+		  ':user_id' => $user_id,
+	      ':item_name' => $item_name, 
+	      ':item_description' => $item_description, 
+	      ':starting_price'=> $starting_price,
+	      ':buy_it_now_price'=> $buy_it_now_price,
+		  ':reserve_price'=> $reserve_price,
+		  ':start_time'=> $start_time,
+	      ':location'=> $location,
+		  ':url'=> $url,
+		  ':template'=> $template
+	  ); 
+	   
+	  try 
+	  { 
+	      // Execute the query to create the user 
+	      $stmt = $db->prepare($query); 
+	      $result = $stmt->execute($query_params); 
+	  } 
+	  
+	  catch(PDOException $ex) 
+	  {   
+	      // TODO:
+	      // Note: On a production website, you should not output $ex->getMessage(). 
+	      // It may provide an attacker with helpful information about your code.  
+	      die("Failed to run query: " . $ex->getMessage()); 
+	  }
+	  
+	  $itemid = $db->lastInsertId();
+	  $query = "CREATE EVENT item_event_$itemid
+                  ON SCHEDULE AT '$start_time' + INTERVAL 2 WEEK
+                  DO
+                     BEGIN
+                        CALL proc_endAuction($itemid);
+                     END";
+	  
+	  try 
+	  { 
+	      // Execute the query to create the user 
+	      $stmt = $db->prepare($query); 
+	      $result = $stmt->execute(); 
+	  } 
+	  
+	  catch(PDOException $ex) 
+	  {   
+	      // TODO:
+	      // Note: On a production website, you should not output $ex->getMessage(). 
+	      // It may provide an attacker with helpful information about your code.  
+	      die("Failed to run query: " . $ex->getMessage()); 
+	  }	  
+	  
+	  $item_result = array ('success' => true);
+	  return $item_result;
+}
+
+function submit_rating($item_id, $buyer_id, $score, $description, $db)
+	{
+	  $item_result = array('success' => false);
+	   
+	  // An INSERT query is used to add new rows to a database table. 
+	  // Again, we are using special tokens (technically called parameters) to 
+	  // protect against SQL injection attacks. 
+	  $query = " 
+	      INSERT INTO ratings (
+			  seller_id,
+	          name, 
+	          description, 
+	          starting_price, 
+	          buy_it_now_price,
+			  reserve_price,
+	          location,
+			  url,
+			  template
+			  
+	      ) VALUES ( 
+			  :user_id,
+	          :item_name, 
+	          :item_description, 
+	          :starting_price, 
+	          :buy_it_now_price,
+			  :reserve_price,
+	          :location,
+			  :url,
+			  :template
+	      ) 
+	  "; 
+	  $query_params = array( 
+		  ':user_id' => $user_id,
+	      ':item_name' => $item_name, 
+	      ':item_description' => $item_description, 
+	      ':starting_price'=> $starting_price,
+	      ':buy_it_now_price'=> $buy_it_now_price,
+		  ':reserve_price'=> $reserve_price,
+	      ':location'=> $location,
+		  ':url'=> $url,
+		  ':template'=> $template
+	  ); 
+	   
+	  try 
+	  { 
+	      // Execute the query to create the user 
+	      $stmt = $db->prepare($query); 
+	      $result = $stmt->execute($query_params); 
+	  } 
+	  
+	  catch(PDOException $ex) 
+	  {   
+	      // TODO:
+	      // Note: On a production website, you should not output $ex->getMessage(). 
+	      // It may provide an attacker with helpful information about your code.  
+	      die("Failed to run query: " . $ex->getMessage()); 
+	  }
+	  $item_result = array ('success' => true);
+	  return $item_result;
+}
+
+	function highestBid($item_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT MAX(price) as max_price
+            FROM bids
+            WHERE item_id = :item_id
+			
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch();
+        if ($row) {
+        	$max_price = $row['max_price'];
+			if($max_price == '')
+				$max_price = '0.00';
+        }
+        else{
+			$max_price = '0.00';
+        }
+        return $max_price;
+	}
+	
+	function itemsBought($user_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT COUNT(w.winning_bid) as bids_won_count
+            FROM won_items w, users u, bids b, credit_cards c
+            WHERE u.user_id = :user_id
+			AND w.winning_bid = b.bid_id
+			AND c.card_id = b.card_id
+			AND c.user_id = u.user_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':user_id' => $user_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch();
+        if ($row) {
+        	$data['success'] = true;
+        	$data['bid_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No item found with that item id number.";
+			$data['bid_data'] = null;
+        	return $data;
+        }
+        return $data;	
+	}
+	
+	function numBids($item_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+		$query = "SELECT COUNT(*) as count 
+				  FROM bids 
+				  WHERE item_id=:item_id";
+		$query_params = array(':item_id'=>$item_id);
+		
+		try 
+		{ 
+			// Execute the query against the database 
+			$stmt = $db->prepare($query); 
+			$result = $stmt->execute($query_params); 
+		} 
+		catch(PDOException $ex) 
+		{ 
+			die($ex);
+		} 
+		$row = $stmt->fetch();
+		if ($row)
+		{
+			$count = $row['count'];
+		}
+		else
+		{
+			$count = 0;
+		}
+		return $count;
+	}
+	
+	   function uploadFile($fieldName)
    {      
       $_UPLOAD_URL = $_SERVER['DOCUMENT_ROOT'] . "/eAuction/shop/images";
          
@@ -704,5 +1095,5 @@
             return false;
          }
       }
-   }
+   }	
 ?>
