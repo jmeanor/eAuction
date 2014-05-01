@@ -16,8 +16,16 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
   require_once("db.php");
   require_once("functions.php");
 }
-  
 
+    if (!empty($_POST['search'])) {
+		$search = $_POST["search"];
+		$placeholder = "";
+	}
+	else {
+	  	$search = "";
+	  	$placeholder = "What do you want to shop for?";
+	}
+	
 
 ?>
 
@@ -66,7 +74,7 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
           <ul class="nav navbar-nav pull-right">
                 <li><a href="<?php echo $path; ?>home.php">Home</a>
                 </li>
-                <li><a href="<?php echo $path; ?>shop/index.php">Shop</a>
+                <li><a href="<?php echo $path; ?>shop/results.php">Shop</a>
                 </li>
                 <li><a href="<?php echo $path; ?>user/profile.php">Profile</a>
                 </li>
@@ -85,14 +93,13 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
         <div class="col-md-1"></div>
         <div class="col-md-10">
           <h2></h2>
-          <form role="form">
+          <form method="post" action="<?php echo $path; ?>shop/results.php">
             <div class="form-group">
                 <div class="col-md-8  ">
-                  <input type="search" class="input-lg form-control" id="search" placeholder="What do you want to shop for?">
+                  <input type="search" class="input-lg form-control" name="search" id="search" value="<?php echo $search; ?>" placeholder="<?php echo $placeholder; ?>">
                 </div>
                 <div class="col-md-1">
                   <button type="submit" class="btn btn-lg btn-primary">Go</button></div>
-                  <div class="col-md-1"><button type="button" class="btn btn-lg btn-default">Shop by Category</button></div>
               </div>
             </div>
           </form>

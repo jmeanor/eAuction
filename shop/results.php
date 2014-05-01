@@ -1,90 +1,179 @@
 <?php 
+    // Title:       shop/item.php
+    // Desc:        The action page that lists all the search results from the query bar.  
+    // Date:        March 22, 2014
+    // Version:     1.0
+    // Author:      Luke Keniston
+    require_once("../inc/functions.php");
+    checkPermissions();
+    require_once("../inc/header.php");
 
-  // Title:       shop/results.php
-  // Desc:        The action page that lists all the search results from the query bar. 
-  // Date:        March 22, 2014
-  // Version:     1.0
-  // Author:      John Meanor
-
-  require_once("../inc/header.php");
+    if (!empty($_POST['search'])) {
+		$searchData = "%" . trim($_POST["search"]) . "%";
+	}
+	else {
+	  	$searchData = "%";
+	}
+	
+	if (!empty($_POST['category'])) 
+	{
+		$category_id = $_POST['category'];
+	}
+	else {
+	  	$category_id = 1;
+	}
+	
+	if (!empty($_POST['itemType'])) 
+	{
+		$itemType = $_POST['itemType'];	
+	}
+	else {
+	  	$itemType = 'Both';
+	}
+	
+	if (!empty($_POST['lowerPrice']) && $_POST['lowerPrice'] > 0) 
+	{
+		$lowerPriceBound = $_POST['lowerPrice'];
+		$lowerPriceDisplayed = $_POST['lowerPrice'];
+	}
+	else 
+	{
+	  	$lowerPriceBound = 0;
+	  	$lowerPriceDisplayed = "";
+	}
+	
+	if (!empty($_POST['upperPrice']) && $_POST['upperPrice'] > 0) 
+	{
+		$upperPriceBound = $_POST['upperPrice'];
+		$upperPriceDisplayed = $_POST['upperPrice'];
+	}
+	else {
+	  	$upperPriceBound = 9999999999999999999999999999;
+	  	$upperPriceDisplayed = "";
+	}
+	
+	if($lowerPriceBound > $upperPriceBound)
+	{
+		$lowerPriceBound = 0; 
+		$upperPriceBound = 9999999999999999999999999999;
+	
+	}
+	
+	
+    if (!empty($_GET['userid'])) {
+      $data = getProfileData($_GET['userid'], $db);
+    }
+    else {
+      $data = getProfileData($_SESSION['user']['user_id'], $db);
+    }
+    
+    if(!empty(getParentId($category_id, $db)))
+    {
+    	$parent_id = getParentId($category_id, $db);
+    }
+    else
+    	$parent_id = 1;
   
 ?>
-
-
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-   <!--  <div class="jumbotron">
-      <div class="container">
-        <h1>New Items</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
-      </div>
-    </div> -->
-
     <div class="container">
+
+
+    <div class="container-fluid">
       <div class="row">
-        <div class="col-md-1">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+   			<p> Categories </p>
+   			<?php 
+		
+	
+		$stmt = getSubCategories($category_id, $db);
+        $parentName = getCategoryName($parent_id, $db);
+        $parentNameShown = $parentName;
+    	if($parentNameShown == 'root')
+        {
+        	$parentNameShown = "All";
+        }
+        	
+      if($category_id != 1)
+      {
+      
+         
+  ?>      
+   <form name="<?php print $parentName ?>" method="post" action="results.php">
+            <input type="hidden" name="category" value="<?php print $parent_id ?>">
+            <li><a href="javascript:document.forms['<?php print $parentName ?>'].submit()">Go Back to: <?php print $parentNameShown ?></a></li>
+            </form>     
+         <?php
+       }  
+        // prints out list of current categories
+     
+    
+    while ($row = $stmt->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+      $current_category_id = $row[0];
+      $current_category_name = $row[1];
+        ?>
+      <p> 
+ 			
+            <form name="<?php print $current_category_name ?>" method="post" action="results.php">
+            <input type="hidden" name="category" value="<?php print $current_category_id ?>">
+            <li><a href="javascript:document.forms['<?php print $current_category_name ?>'].submit()"><?php print $current_category_name ?></a></li>
+            </form>
+   <?php 
+	}
+    ?>
+    
+    	<p/> 
+    	<p> Price filter </p>
+		<form method="post" action="results.php">
+        	<input type="text" name="lowerPrice" placeholder="min price $" value=<?php echo $lowerPriceDisplayed ?> >
+        	<p/>
+        	<br/>
+        	<input type ="text" name="upperPrice" placeHolder="max price $" value=<?php echo $upperPriceDisplayed ?> >  
+    	
+    	<p> Item Filter </p>
+    		
+    		<input type="radio" name="itemType" value ="Both" <?php echo ($itemType =='Both')?'checked':'' ?> > Both</input><br/>
+			<input type="radio" name="itemType" value="BuyItNow" <?php echo ($itemType =='BuyItNow')?'checked':'' ?> > Buy It Now Only</input><br/>
+			<input type="radio" name="itemType" value="BidOnly" <?php echo ($itemType =='BidOnly')?'checked':'' ?> > Bid Only</input><br/><br/>
+			<button type="submit" class="">Filter</button>  
+		</form> 
+		
+		
+		
+          </ul>
+		
         </div>
-        <div class="col-md-10">
-          <h1>Search Results for "Computers"</h1>
-          <hr />
-        </div>
-        <div class="col-md-1">
-        </div>
+        <div class="col-sm-9 col-md-10 main">
+<?php 
+
+
+         
+       
+   ?>     
+        <h2 class="sub-header">Search Results</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Item name</th>
+                  <th>Bid ends on:</th>
+                  <th>Buy It Now Price</th>
+                  <th>Latest Bid</th>
+                </tr>
+              </thead>
+              <tbody> 
+                <?php  getSearchResults($category_id, $searchData, $itemType, $lowerPriceBound , $upperPriceBound, $db); ?> 
+			</tbody>
+
+	</thread>
+    </table>   
       </div>
     </div>
-
-    <div class="container marketing">
-
-      <!-- Three columns of text below the carousel -->
-      <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg-3">
-          <center><img class="img-circle" height="140" width="140" src="../inc/img/download.png" alt="Generic placeholder image"></center>
-          <h2>Item 1 </h2>
-          <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <center><img class="img-circle" height="140" width="140" src="../inc/img/download.png" alt="Generic placeholder image"></center>
-          <h2>Item 2</h2>
-          <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <center><img class="img-circle" height="140" width="140" src="../inc/img/download.png" alt="Generic placeholder image"></center>
-          <h2>Item 3</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-1"></div>
-      </div><!-- /.row -->
+</div> 
 
 
-      <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg-3">
-          <center><img class="img-circle" height="140" width="140" src="../inc/img/download.png" alt="Generic placeholder image"></center>
-          <h2>Item 4 </h2>
-          <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <center><img class="img-circle" height="140" width="140" src="../inc/img/download.png" alt="Generic placeholder image"></center>
-          <h2>Item 5</h2>
-          <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <center><img class="img-circle" height="140" width="140" src="../inc/img/download.png" alt="Generic placeholder image"></center>
-          <h2>Item 6</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-1"></div>
-      </div><!-- /.row -->
-
-
-      
       <?php require_once("../inc/footer.php"); ?>
-
-
+      
+<form id="categoriesForm" method="post" action="results.php">
+<input type="hidden" name="category" id="category">
+</form>
