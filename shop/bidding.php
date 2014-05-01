@@ -8,8 +8,11 @@
 	// TO DO
     require_once("../inc/header.php");
 	$item_id = $_GET['id'];
+	$is_over = checkIfOver($item_id, $db);
   	if(isset($_POST['phase']))
 		$phase = $_POST['phase'];
+	elseif($is_over['success'])
+		$phase = 'bought';
 	else
 		$phase = '';
 	
@@ -306,7 +309,6 @@
 			 ?>
           </center>
         </div><!-- /.col-lg-4 -->
-        </div>
         <div class="col-lg-2">
           <h4>Seller Info</h4>
           <p><b><?php echo $item['item_data']['username']?></b></p>
