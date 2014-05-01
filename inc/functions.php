@@ -1461,6 +1461,39 @@ function updateUser($user_id, $email, $phone, $description, $public_location, $u
 	  return $item_result;
 }	
 
+function submitResponse($seller_response, $item_id, $db)
+	{
+	  $item_result = array('success' => false);
+	   
+	  $query = " 
+	      UPDATE ratings 
+		  SET seller_response = :seller_response
+		  WHERE item_id = :item_id
+		  
+	  "; 
+	  $query_params = array( 
+		  ':seller_response' => $seller_response,
+		  ':item_id' => $item_id
+	  ); 
+	   
+	  try 
+	  { 
+	      // Execute the query to update the user 
+	      $stmt = $db->prepare($query); 
+	      $result = $stmt->execute($query_params); 
+	  } 
+	  
+	  catch(PDOException $ex) 
+	  {   
+	      // TODO:
+	      // Note: On a production website, you should not output $ex->getMessage(). 
+	      // It may provide an attacker with helpful information about your code.  
+	      die("Failed to run query: " . $ex->getMessage()); 
+	  }
+	  $item_result = array ('success' => true);
+	  return $item_result;
+}	
+
 	function checkIfOver($item_id, $db)
 	{
 		$data = array();

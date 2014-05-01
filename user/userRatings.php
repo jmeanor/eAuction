@@ -50,13 +50,13 @@
 				<div class="caption">
 					<h3><?php echo $item_info['name']?></h3>
 					<p><b>User's Rating: </b> <?php echo $item_info['description']?></p>
-					<?php if ($item_info['seller_response'] == null)
+					<?php if ($data['user_data']['user_id'] == $_SESSION['user']['user_id'])
 					{
 					?>
-						<a class="btn btn-default btn-xs" href="../user/addResponse.php?id=<?php echo $item_info['rating_id']?>" role="button"> Respond to Rating &raquo;</a>
+						<a class="btn btn-default btn-xs" href="../user/addResponse.php?id=<?php echo $item_info['item_id']?>" role="button"> Respond to Rating &raquo;</a>
 					<?php
 					}
-					else
+					if ($item_info['seller_response'] != null)
 					{
 					?>
 					<p><b><?php echo $data['user_data']['name']?>'s Response: </b> <?php echo $item_info['seller_response']?></p>
