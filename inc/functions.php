@@ -1263,6 +1263,49 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
         return $max_price;
 	}
 	
+	function recentBid($item_id, $user_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT price
+            FROM bids
+            WHERE item_id = :item_id 
+			AND price = (SELECT MAX(price) FROM bids WHERE item_id = :item_id AND card_id IN (SELECT card_id FROM credit_cards WHERE user_id = :user_id))
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id,
+			':user_id' => $user_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch();
+        if ($row) {
+        	$max_price = $row['price'];
+			if($max_price == '')
+				$max_price = '0.00';
+        }
+        else{
+			$max_price = '0.00';
+        }
+        return $max_price;
+	}
+	
 	function itemsBought($user_id, $db)
 	{
 		$data = array();
