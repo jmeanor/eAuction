@@ -93,23 +93,29 @@
         {
         	$parentNameShown = "All";
         }
-      if($category_id == 1) 
-      {
-      	$itemCount = getNumberOfItemsForCategory($category_id, $db);
+
+      	$itemCountParent = getNumberOfItemsForCategory($parent_id, $db);
+      	$itemCountCurrent = getNumberOfItemsForCategory($category_id, $db);
+      	$categoryName = getCategoryName($category_id, $db);
+      	if($categoryName == 'root')
+      	{
+      		$categoryName = "All";
+      	}
       
-      
-      	?> <li>All (<?php print $itemCount ?>)</li> <?php
-      }  	
+      	
+ 	
       if($category_id != 1)
       {
           
   ?>      
    <form name="<?php print $parentName ?>" method="post" action="results.php">
             <input type="hidden" name="category" value="<?php print $parent_id ?>">
-            <li><a href="javascript:document.forms['<?php print $parentName ?>'].submit()">Go Back to: <?php print $parentNameShown ?></a></li>
-            </form>     
+            <li><a href="javascript:document.forms['<?php print $parentName ?>'].submit()">Go Back to: <?php print $parentNameShown ?> (<?php print $itemCountParent ?>)</a></li>
+            </form> 
+                
          <?php
-       }  
+       } 
+       ?> <p><li> <?php print $categoryName ?> (<?php print $itemCountCurrent ?>)</li> <?php
         // prints out list of current categories
      
     
