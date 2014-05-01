@@ -138,16 +138,10 @@
 		}
 		
 		$query = "CALL proc_endAuction($item_id)";
-		try 
-		{ 
-			// Execute the query against the database 
-			$stmt = $db->prepare($query); 
-			$result = $stmt->execute(); 
-		} 
-		catch(PDOException $ex) 
-		{ 
-			die($ex);
-		}
+		$db->exec($query);
+		
+		$query = "DROP EVENT IF EXISTS item_event_$item_id";
+		$db->exec($query);
 		
 		$phase = 'bought';
 	}
@@ -162,7 +156,9 @@
 		<div class="row">
           <?php if ($message != '') echo "<div class='alert alert-$success'>".$message.'</div>'; ?>
         </div>
+		<div class="row">
 		<?php if($mr_bid_user != '0.00' && $mr_bid_user == $highest_bid) echo "<div class='alert alert-success'>Congratulations, you are currently winning this auction!</div>"; ?>
+		</div>
 	
 	
       <div class="row">
@@ -270,5 +266,72 @@
 
 
       <?php 
+	  }
+	  elseif($phase == 'bought')
+	  {
+?>
+	  <div class="container">
+		<div class="row">
+			<div class='alert alert-info'>This item has been purchased!</div>
+		</div>
+	
+	
+      <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+          <h4></h4>
+		  <h1><?php echo $item['item_data']['name'] ?></h1>
+          <a class="btn btn-default" href="../shop/item.php?id=<?php echo $item_id ?>" type="button">Back to Item Description &raquo;</a>
+          <hr />
+        </div>
+        <div class="col-md-1">
+        </div>
+      </div>
+    </div>
+
+    <div class="container marketing">
+
+      <!-- Three columns of text below the carousel -->
+      <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-3">
+          <center>
+            <?php if (!empty($pics['picture_data']))
+			  {
+				?>	  
+						<img class="img-thubmnail" name="mypic" src="../<?php echo $pics['picture_data'][0]['url']?>" style="height: auto; max-height: 200px; width: auto; max-width: 250px;" >
+			<?php
+			  }
+			 ?>
+          </center>
+        </div><!-- /.col-lg-4 -->
+        </div>
+        <div class="col-lg-2">
+          <h4>Seller Info</h4>
+          <p><b><?php echo $item['item_data']['username']?></b></p>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Bought: <?php echo $total_bought['bid_data']['bids_won_count']?></p>
+		  <?php
+		  }
+		  ?>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Sold: <?php echo $item_count['user_data']['COUNT(u.user_id)'] ?></p>
+		  <?php
+		  }
+		  ?>          
+		  <p><?php echo $item['item_data']['public_location']?></p>
+          <p><a class="btn btn-default btn-xs" class="btn btn-primary" href="../user/profile.php?id=<?php echo $item['item_data']['seller_id']?>" role="button">View Profile &raquo;</a></p>
+
+
+        </div>
+       
+        <div class="col-lg-1"></div>
+      </div><!-- /.row -->
+<?php
 	  }
 	  require_once("../inc/footer.php"); ?>
