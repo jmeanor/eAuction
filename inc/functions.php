@@ -1020,8 +1020,8 @@
             		OR ($option = 1 AND i.starting_price = 0 AND i.buy_it_now_price > 0)
             		OR ($option = 2 AND i.starting_price > 0 AND i.buy_it_now_price = 0)
             		)
-            	AND ((i.starting_price >= :minPrice || i.buy_it_now_price >= :minPrice) 
-            		 AND ((i.starting_price <= :maxPrice AND i.starting_price != 0) || (i.buy_it_now_price <= :maxPrice AND i.buy_it_now_price != 0))
+            	AND ((i.buy_it_now_price >= :minPrice) 
+            		 AND (i.buy_it_now_price <= :maxPrice AND i.buy_it_now_price != 0)
             	    )
             	 )
            ";  
@@ -1045,7 +1045,7 @@
         	$add_days = 14;
 			$endDate = date('Y-m-d h:i:s',strtotime($row[2]) + (24*3600*$add_days));
 
-
+			
     		if($row[4] == 0)
     			$buyNowPrice = "N/A";
     		else 
@@ -1055,10 +1055,20 @@
     		else 
     			$bidPrice =  $row[3];
     			
-        	$data = "<td><a href=item.php?id=" . $row[0] . ">" . $row[1] .
+    		$highestBidPrice = highestBid($row[0], $db);
+    		if($highestBidPrice == 0)
+    		{
+    			$highestBidPrice = $row[3];
+    		}
+    		
+    		if(($highestBidPrice >= $minPrice) && ($highestBidPrice <= $maxPrice && $highestBidPrice != 0))
+    		{
+    			
+        		$data = "<td><a href=item.php?id=" . $row[0] . ">" . $row[1] .
         		    "</a></td> <td> " . $endDate . "</td> <td> " . $buyNowPrice .
-        		    "</td> <td> " . $bidPrice . "</td>" ;  
-       		 print $data; 
+        		    "</td> <td> " . $highestBidPrice . "</td>" ;  
+       		 	print $data;
+       		 } 
 	    	?> </tr> <?php
         }
     }  

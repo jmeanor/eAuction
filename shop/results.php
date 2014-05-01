@@ -167,7 +167,7 @@
                   <th>Item name</th>
                   <th>Bid ends on:</th>
                   <th>Buy It Now Price</th>
-                  <th>Latest Bid</th>
+                  <th>Price</th>
                 </tr>
               </thead>
               <tbody> 
