@@ -12,6 +12,23 @@
 	$pics = getPics($item_id, $db);
 	$total_bought = itemsBought($test['item_data']['seller_id'], $db);
     $item_count = getItemCount($test['item_data']['seller_id'], $db);
+	$highest_bid = highestBid($item_id, $db);
+	$check = checkIfOver($item_id, $db);
+	if($highest_bid != '0.00')
+	{
+		$min_bid = floatval($highest_bid) * 1.05;
+	}
+	elseif(floatval($test['item_data']['starting_price']) >= floatval('1.00'))
+	{
+		$min_bid = floatval($test['item_data']['starting_price']);
+	}
+	else
+	{
+		$min_bid = floatval('1.00');
+	}
+	
+	$count = numBids($item_id, $db);
+	$message = '';
 	
 	if (!empty($pics['picture_data']))
 	{
@@ -111,11 +128,23 @@ function slideshowBack()
           </center>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-5">
-          <h2><b>Current Bid</b>: $<?php echo $test['item_data']['buy_it_now_price']?> <!--<span class="badge">12</span><br />--></h2>
-          <h2><b>Buy it Now Price:</b> $<?php echo $test['item_data']['buy_it_now_price']?></h2>
+          <h2><b>Starting Price</b>: $<?php echo $test['item_data']['starting_price'] ?><br />
+		  <b>Current Bid</b>: $<?php echo $highest_bid ?> <span class="badge"><?php echo $count ?></span><br />
+		  <?php if($test['item_data']['buy_it_now_price'] != '0.00')
+		  {
+		  ?>
+          <b>Buy it Now Price:</b> $<?php echo $test['item_data']['buy_it_now_price'] ?></h2>
+		  <?php
+		  }
+		  ?>
           <h1></h1>
-          <center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php?id=<?php echo $item_id ?>" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
-          <br/>
+		  <?php if ($check['success'] == false)
+		  {?>
+			<center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php?id=<?php echo $item_id ?>" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
+          <?php
+		  }
+		  ?>
+		  <br/>
           <p><?php echo $test['item_data']['description']?></p>
         </div>
         <div class="col-lg-2">

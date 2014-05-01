@@ -1469,6 +1469,52 @@ function updateUser($user_id, $email, $phone, $description, $public_location, $u
 	  $item_result = array ('success' => true);
 	  return $item_result;
 }	
+
+	function checkIfOver($item_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT w.item_id
+            FROM won_items w
+            WHERE w.item_id = :item_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetchAll();
+        if ($row) {
+        	$data['success'] = true;
+        	$data['item_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No item found with that item id number.";
+			$data['item_data'] = null;
+        	return $data;
+        }
+        return $data;	
+	}	
+
+
 		
 	   function uploadFile($fieldName)
    {      
