@@ -7,9 +7,9 @@
     require_once("../inc/functions.php");    
     require_once("../inc/header.php");
 	
-	 if (!empty($_GET['userid'])) {
-	  $data = getProfileData($_GET['userid'], $db);
-	  $item_data = getItemData($_GET['userid'], $db);
+	 if (!empty($_GET['id'])) {
+	  $data = getProfileData($_GET['id'], $db);
+	  $item_data = getItemData($_GET['id'], $db);
 	}
     else {
       $data = getProfileData($_SESSION['user']['user_id'], $db);

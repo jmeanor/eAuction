@@ -30,7 +30,7 @@
     <div class="container">
 
       <?php // Check for error to display, else, display the profile data 
-            if (!$data['success'] ) 
+            if (!$data['success']) 
 			{ ?>
 				<div class="alert alert-danger"><?php echo $data['message']; ?></div>
       <?php } else { ?>
@@ -39,9 +39,9 @@
         <div class="col-lg-12">
           <h1><?php echo $data['user_data']['name'] ?></h1>
           <h3><span class="glyphicon glyphicon-user"></span> <?php echo $data['user_data']['username'] ?>
-		  <?php if (!empty($_SESSION['user']['user_id'])) 
+		  <?php if (empty($_GET['userid'])) 
 		  { ?>
-			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Contact Information &raquo;</a> <a class="btn btn-default btn-xs" href="../user/addSocialMedia.php" role="button"> Add Social Media &raquo;</a>
+			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Contact Information &raquo;</a> <a class="btn btn-default btn-xs" href="../user/addSocialMedia.php" role="button"> Add Social Media &raquo;</a> <a class="btn btn-default btn-xs" href="../shop/newAuction.php" role="button"> Create an Auction &raquo;</a>
 		  <?php 
 		  } 
 		  ?>
@@ -68,7 +68,7 @@
 			<?php
 			}
 			
-			else if ($sm_info['sm_data']['sm_type'] = "fb")
+			else if ($sm_info['sm_type'] = "fb")
 			{
 			?>
 				<p><b>Facebook: </b> <?php echo $sm_info['username']?></p>
@@ -128,13 +128,13 @@
 					<?php if ($pics['success'] == true)
 					{
 					?>
-					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image"></center>
+					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					else
 					{
 					?>
-						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image"></center>
+						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					?>					  
@@ -174,13 +174,13 @@
 					<?php if ($pics['success'] == true)
 					{
 					?>
-					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image"></center>
+					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					else
 					{
 					?>
-						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image"></center>
+						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					?>

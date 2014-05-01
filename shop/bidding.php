@@ -14,15 +14,18 @@
 		$phase = '';
 	
 	$item = itemInfo($item_id, $db);
+	$pics = getPics($item_id, $db);
 	$cards = getCards($_SESSION['user']['user_id'], $db);
 	$highest_bid = highestBid($item_id, $db);
+	$total_bought = itemsBought($item['item_data']['seller_id'], $db);
+    $item_count = getItemCount($item['item_data']['seller_id'], $db);
 	if($highest_bid != '0.00')
 	{
 		$min_bid = floatval($highest_bid) * 1.05;
 	}
 	elseif(floatval($item['item_data']['starting_price']) >= floatval('1.00'))
 	{
-		$min_bid = floatval($item['item_data']['starting_price']) * 1.05;
+		$min_bid = floatval($item['item_data']['starting_price']);
 	}
 	else
 	{
@@ -117,7 +120,8 @@
           </center>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-5">
-          <h2><b>Current Bid</b>: $<?php echo $highest_bid ?> <span class="badge"><?php echo $count ?></span><br />
+          <h2><b>Starting Price</b>: $<?php echo $item['item_data']['starting_price'] ?><br />
+		  <b>Current Bid</b>: $<?php echo $highest_bid ?> <span class="badge"><?php echo $count ?></span><br />
 		  <?php if($item['item_data']['buy_it_now_price'] != '0.00')
 		  {
 		  ?>
@@ -162,11 +166,23 @@
         </div>
         <div class="col-lg-2">
           <h4>Seller Info</h4>
-          <p>Sold by <a>temp<?php // echo username?></a></p>
-          <p>Items Sold: <?php // echo items sold count? ?>254</p>
-          <p>Items Bought: <?php // echo items bought count? ?>14</p>
-          <p>Location: <?php // echo user location ?>United Kingdom</p>
-          <p><button type="button" class="btn btn-sm btn-default">Contact Seller</button></p>
+          <p><b><?php echo $item['item_data']['username']?></b></p>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Bought: <?php echo $total_bought['bid_data']['bids_won_count']?></p>
+		  <?php
+		  }
+		  ?>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Sold: <?php echo $item_count['user_data']['COUNT(u.user_id)'] ?></p>
+		  <?php
+		  }
+		  ?>          
+		  <p><?php echo $item['item_data']['public_location']?></p>
+          <p><a class="btn btn-default btn-xs" class="btn btn-primary" href="../user/profile.php?id=<?php echo $item['item_data']['seller_id']?>" role="button">View Profile &raquo;</a></p>
 
 
         </div>

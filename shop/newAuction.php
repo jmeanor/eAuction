@@ -74,6 +74,7 @@
 		  }
 		  
 		  $pic_upload = upload_file($_POST['pic']);
+		  
 	  }
 	}
 ?>
