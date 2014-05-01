@@ -12,8 +12,52 @@
 	$pics = getPics($item_id, $db);
 	$total_bought = itemsBought($test['item_data']['seller_id'], $db);
     $item_count = getItemCount($test['item_data']['seller_id'], $db);
+	
+	if (!empty($pics['picture_data']))
+	{
+?>
+<script language="JavaScript">
+var num=1;
+<?php
+	$counter = 1;
+	foreach($pics['picture_data'] as $pic_data)
+	{
+		echo "img$counter = new Image();\n";
+		echo "img$counter.src = \"../" . $pic_data['url'] . "\";\n";
+		$counter++;
+	}
 ?>
 
+function slideshowUp()
+{
+	var prev=num;
+	num=num+1;
+	if (num==<?php echo $counter ?>)
+	{
+		num=1;
+	}
+	document.mypic.src=eval("img"+num+".src");
+	document.getElementById("sel"+num).className="glyphicon glyphicon-expand";
+	document.getElementById("sel"+prev).className="glyphicon glyphicon-unchecked";
+}
+
+function slideshowBack()
+{
+	var prev=num;
+	num=num-1;
+	if (num==0)
+	{
+		num=<?php echo ($counter-1) ?>;
+	}
+	document.mypic.src=eval("img"+num+".src");
+	document.getElementById("sel"+num).className="glyphicon glyphicon-expand";
+	document.getElementById("sel"+prev).className="glyphicon glyphicon-unchecked";
+}
+
+</script>
+<?php
+	}
+?>
 <style type="text/css">
   body {
     padding-top: 40px;
@@ -45,20 +89,22 @@
           <center>
 			  <?php if (!empty($pics['picture_data']))
 			  {
-					$counter = 1;
-			  ?>  	  
-					<ul class="pagination">	
-					<?php foreach ($pics['picture_data'] as $pic_info)
-					{
-					?>
-						<img class="img-thubmnail" src="../<?php echo $pic_info['url']?>" height="200">
-						<li class="active"><a><?php echo $counter ?> <span class="sr-only">(current)</span></a></li>	
-					<?php
-						$counter++;
-					}
-					?>
-					</ul>
+				?>	  
+						<img class="img-thubmnail" name="mypic" src="../<?php echo $pics['picture_data'][0]['url']?>" style="height: auto; max-height: 200px; width: auto; max-width: 250px;" >
 				<?php
+					if(count($pics['picture_data']) > 1)
+					{
+				?>
+						<br /><a href="JavaScript:slideshowBack()"><span class="glyphicon glyphicon-chevron-left"></span></a> <span class="glyphicon glyphicon-expand" id='sel1'></span>
+				<?php
+					for($i = 2; $i <= count($pics['picture_data']); $i++)
+					{
+						echo " <span class='glyphicon glyphicon-unchecked' id='sel$i'></span>";
+					}
+				?>
+						<a href="JavaScript:slideshowUp()"><span class="glyphicon glyphicon-chevron-right"></span></a> 
+				<?php
+					}
 				}
 			  ?>
 
