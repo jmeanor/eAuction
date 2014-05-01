@@ -442,8 +442,9 @@
         <p>Auction Marked Successful: <?php echo (!$success_date ? "N/A" : $success_date) ?></p>
         <?php if(!$success_date && $ready_success) { ?>
         <button  class="btn btn-lg btn-success btn-block" type="submit" onclick="document.getElementById('phase').value = 'successful';">Mark Auction Completed Successfully</button>
+		<?php } ?>
         <button  class="btn btn-lg btn-danger btn-block" type="submit" onclick="document.getElementById('phase').value = 'failure';">Notified Participants of Failure</button>
-        <?php } elseif($success_date != false) { ?>
+        <?php if($success_date != false) { ?>
         <button  class="btn btn-lg btn-danger btn-block" type="submit" onclick="document.getElementById('phase').value = 'unsuccessful';">Mark Auction Not Complete</button>
         <?php } ?>
         </div>
