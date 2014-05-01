@@ -84,6 +84,15 @@ function slideshowBack()
 </style>
 
     <div class="container">
+<?php	if($check['success'])
+		{
+?>
+		<div class="row">
+			<div class='alert alert-info'>This item has been purchased!</div>
+		</div>
+<?php
+		}
+?>
       <div class="row">
         <div class="col-md-1">
         </div>
