@@ -848,7 +848,7 @@
         return $data;
 	}
 	
-<<<<<<< HEAD
+
 	function getCategoryName($categoryId, $db)
 	{
 	    $query = " 
@@ -925,6 +925,57 @@
 	
 	} 
 	
+	function getNumberOfItemsForCategory($category_id, $db)
+	{
+		$totalItems = 0; 
+		
+		$stmt = getSubCategories($category_id, $db);
+		$counter = countNumberOfItems($category_id, $db);
+	  	while ($row = $stmt->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+      		$current_category_id = $row[0];
+      		$counter += getNumberOfItemsForCategory($current_category_id, $db);
+       		
+         
+		}
+		return $counter;
+	}
+	function countNumberOfItems($category_id, $db) 
+	{  
+	
+		$query = " 
+            SELECT i.item_id, i.name , i.start_time       
+            FROM items_in_categories iic, items i
+            WHERE iic.item_id = i.item_id AND :category_id = iic.category_id";  
+		
+        $query_params = array(':category_id' => $category_id);
+        try 
+	    {  
+	        // Execute the query to create the user 
+	        $stmt = $db->prepare($query); 
+            $stmt->execute($query_params);
+        } 
+        catch(PDOException $ex) 
+        { 
+        	//die(var_dump
+            die($ex);
+        } 
+        $counter = 0;
+        while ($row = $stmt->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) 
+        {
+          	$today = date('Y-m-d h:i:s');
+        	$add_days = 14;
+			$endDate = date('Y-m-d h:i:s',strtotime($row[2]) + (24*3600*$add_days));
+
+			$today_time = strtotime($today);
+			$end_time = strtotime($endDate);
+
+		  if ($end_time > $today_time)
+          {
+        	$counter = $counter + 1;
+           }
+	    }
+	    return $counter;
+    }  
 	
 	function getSearchResults($rootCategory, $searchData, $itemCriteria, $minPrice, $maxPrice, $db)
 	{
@@ -934,8 +985,8 @@
 		}
 		$stmt = getSubCategories($rootCategory, $db);
 	
-	  while ($row = $stmt->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
-      	$current_category_id = $row[0];
+	  	while ($row = $stmt->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
+      		$current_category_id = $row[0];
         getSearchResults($current_category_id, $searchData, $itemCriteria, $minPrice, $maxPrice, $db);
          
 		}

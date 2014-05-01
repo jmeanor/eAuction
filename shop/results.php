@@ -93,11 +93,16 @@
         {
         	$parentNameShown = "All";
         }
-        	
+      if($category_id == 1) 
+      {
+      	$itemCount = getNumberOfItemsForCategory($category_id, $db);
+      
+      
+      	?> <li>All (<?php print $itemCount ?>)</li> <?php
+      }  	
       if($category_id != 1)
       {
-      
-         
+          
   ?>      
    <form name="<?php print $parentName ?>" method="post" action="results.php">
             <input type="hidden" name="category" value="<?php print $parent_id ?>">
@@ -111,12 +116,14 @@
     while ($row = $stmt->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_NEXT)) {
       $current_category_id = $row[0];
       $current_category_name = $row[1];
+      $itemCount = getNumberOfItemsForCategory($current_category_id, $db);
+      $category_Label = $current_category_name . " (" . $itemCount . ")";
         ?>
       <p> 
  			
             <form name="<?php print $current_category_name ?>" method="post" action="results.php">
             <input type="hidden" name="category" value="<?php print $current_category_id ?>">
-            <li><a href="javascript:document.forms['<?php print $current_category_name ?>'].submit()"><?php print $current_category_name ?></a></li>
+            <li><a href="javascript:document.forms['<?php print $current_category_name ?>'].submit()"><?php print $category_Label ?></a></li>
             </form>
    <?php 
 	}
