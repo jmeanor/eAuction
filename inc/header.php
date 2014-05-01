@@ -13,8 +13,8 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
   require_once("../inc/functions.php");
 } else {
   $path = "";
-  require_once("db.php");
-  require_once("functions.php");
+  require_once("inc/db.php");
+  require_once("inc/functions.php");
 }
 
     if (!empty($_POST['search'])) {
@@ -84,7 +84,7 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
                 </li>
                 <li><a href="<?php echo $path; ?>user/stats.php">Stats</a>
                 </li>
-                <li><a href="<?php echo $path; ?>user/ship.php">Ship Item</a>
+                <li><a href="<?php echo $path; ?>user/ship.php">Administrate Item</a>
                 </li>
                 <?php } ?>
                 <li><a href="<?php echo $path; ?>user/logout.php">Logout</a>

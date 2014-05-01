@@ -4,9 +4,9 @@
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor
-    require_once("../inc/functions.php");
-    checkPermissions();
 
+	require_once("../inc/header.php");
+	checkPermissions();
     // Only admins have access to this page.
     if (!isAdmin()) {
 
@@ -14,7 +14,6 @@
         die("Not authorized administrator."); 
     }
     
-    require_once("../inc/header.php");
     $wasMailed = false;
 
     $report = getReport($db);
@@ -60,7 +59,7 @@
                         <td><?php echo $row['name']; ?></td>
                         <td><?php echo $row['gender']; ?></td>
                         <td><?php echo $row['age']; ?></td>
-                        <td><?php echo money_format('%i', $row['annual_income']); ?></td>
+                        <td>$<?php echo number_format($row['annual_income'], 2); ?></td>
                         <td><?php echo $row['phone_number']; ?></td>
                         <td><a href="mailto:<?php echo $row['email']; ?>"><?php echo $row['email']; ?></a></td>
                         <td><?php echo $row['public_location']; ?></td>

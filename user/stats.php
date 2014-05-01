@@ -4,7 +4,7 @@
     // Date:        April 30, 2014
     // Version:     1.0
     // Author:      John Meanor
-    require_once("../inc/functions.php");
+    require_once("../inc/header.php");
     checkPermissions();
 
     // Only admins have access to this page.
@@ -14,7 +14,6 @@
         die("Not authorized administrator."); 
     }
     
-    require_once("../inc/header.php");
     $wasMailed = false;
 
     $report = getReport($db);

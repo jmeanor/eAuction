@@ -4,11 +4,8 @@
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor
-    require_once("inc/functions.php");
-    checkPermissions();
-    
     require_once("inc/header.php");
-
+	checkPermissions();
   
 ?>
 
