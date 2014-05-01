@@ -67,12 +67,8 @@
       $data = getProfileData($_SESSION['user']['user_id'], $db);
     }
     
-    if(!empty(getParentId($category_id, $db)))
-    {
-    	$parent_id = getParentId($category_id, $db);
-    }
-    else
-    	$parent_id = 1;
+    $parent_id = getParentId($category_id, $db);
+
   
 ?>
     <div class="container">
