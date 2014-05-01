@@ -23,6 +23,7 @@
         //mail("telemarketer@telemarketercompany.com","New eAuction Report",$report['data']);
         $wasMailed = true;
     }
+    date_default_timezone_set('America/New_York');
     setlocale(LC_MONETARY, 'en_US');
 
     $catStats = getCategoryStats($db);
@@ -169,7 +170,7 @@
                     enabled: false
                 },
                 tooltip: {
-                    pointFormat: 'Population in 2008: <b>{point.y:.1f} millions</b>',
+                    pointFormat: '',
                 },
                 series: [{
                     name: 'Population',
