@@ -128,13 +128,13 @@
 					<?php if ($pics['success'] == true)
 					{
 					?>
-					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image"></center>
+					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					else
 					{
 					?>
-						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image"></center>
+						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					?>					  
@@ -174,13 +174,13 @@
 					<?php if ($pics['success'] == true)
 					{
 					?>
-					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image"></center>
+					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					else
 					{
 					?>
-						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image"></center>
+						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image" style="height: auto; max-height: 200px; width: auto; max-width: 250px;"></center>
 					<?php
 					}
 					?>
