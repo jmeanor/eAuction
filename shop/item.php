@@ -6,8 +6,21 @@
     // Author:      John Meanor
 
     require_once("../inc/header.php");
-  
+	$item_id = $_GET['id'];
+	
+	$test = itemInfo($item_id, $db);
+	$pics = getPics($item_id, $db);
+	$total_bought = itemsBought($test['item_data']['seller_id'], $db);
+    $item_count = getItemCount($test['item_data']['seller_id'], $db);
 ?>
+
+<style type="text/css">
+  body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #eee;
+  }
+</style>
 
     <div class="container">
       <div class="row">
@@ -15,7 +28,7 @@
         </div>
         <div class="col-md-10">
           <h4></h4>
-          <button type="button" class="btn btn-sm btn-warning">Back to Results</button>
+		  <h1><?php echo $test['item_data']['name']?></h1>
           <hr />
         </div>
         <div class="col-md-1">
@@ -30,7 +43,21 @@
         <div class="col-lg-1"></div>
         <div class="col-lg-3">
           <center>
-            <img class="img-thumbnail" height="200" width="200" src="../inc/img/2.jpg" alt="Generic placeholder image">
+			  <?php if (!empty($pics['picture_data']))
+			  { 
+			  ?>    
+					<ul class="pagination">	
+					<?php foreach ($pics['picture_data'] as $sm_info)
+					{
+					?>
+						<img src="../<?php echo $sm_info['url']?>" height="200" width="200">
+						<li class="active"><a href="#"><span class="sr-only">(current)</span></a></li>
+						
+					<?php
+					}
+			  }
+			  ?>
+			             <img src="../<?php echo $pics['picture_data']['url']?>" height="200" width="200">
             <ul class="pagination">
               <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
               <li class="disabled"><a href="#">2</a></li>
@@ -41,24 +68,32 @@
           </center>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-5">
-          <h2>Used Macbook Pro Retina 2007</h2>
-          <b>Current Bid</b>: $589.50 <span class="badge">12</span><br />
-          <b>Buy it Now Price:</b> $1100.00
+          <h2><b>Current Bid</b>: $<?php echo $test['item_data']['buy_it_now_price']?> <!--<span class="badge">12</span><br />--></h2>
+          <h2><b>Buy it Now Price:</b> $<?php echo $test['item_data']['buy_it_now_price']?></h2>
           <h1></h1>
-          <center><button type="button" class="btn btn-primary">Place Bid!</button> <button type="button" class="btn btn-success">Buy it Now</button> </center>
+          <center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php?id=<?php echo $item_id ?>" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
           <br/>
-          <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
-          <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-          <p>Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-          <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
+          <p><?php echo $test['item_data']['description']?></p>
         </div>
         <div class="col-lg-2">
           <h4>Seller Info</h4>
-          <p><a>userName123</a></p>
-          <p>Items Sold: 254</p>
-          <p>Items Bought: 14</p>
-          <p>Location: United Kingdom</p>
-          <p><button type="button" class="btn btn-sm btn-default">Contact Seller</button></p>
+          <p><b><?php echo $test['item_data']['username']?></b></p>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Bought: <?php echo $total_bought['bid_data']['bids_won_count']?></p>
+		  <?php
+		  }
+		  ?>
+		  <?php if (!empty($total_bought))
+		  {
+		  ?>
+			<p>Items Sold: <?php echo $item_count['user_data']['COUNT(u.user_id)'] ?></p>
+		  <?php
+		  }
+		  ?>          
+		  <p><?php echo $test['item_data']['public_location']?></p>
+          <p><a class="btn btn-default btn-xs" class="btn btn-primary" href="../user/profile.php?id=<?php echo $test['item_data']['seller_id']?>" role="button">View Profile &raquo;</a></p>
 
 
         </div>

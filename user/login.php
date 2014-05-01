@@ -163,6 +163,7 @@
         <input type="password" name="password" class="form-control" placeholder="Password">
        
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <a href="register.php" class="btn btn-lg btn-default btn-block">Register</a>
       </form>
 
     </div> <!-- /container -->

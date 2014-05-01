@@ -46,6 +46,7 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
 
     <!-- Custom styles for this template -->
     <link href="<?php echo $path; ?>inc/css/jumbotron.css" rel="stylesheet">
+    <script type="text/javascript" src="<?php echo $path; ?>inc/js/jquery-1.10.2.min.js"></script>
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -78,8 +79,17 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
                 </li>
                 <li><a href="<?php echo $path; ?>user/profile.php">Profile</a>
                 </li>
+                <?php if(isAdmin()) { ?>
+                <li><a href="<?php echo $path; ?>user/report.php">Telemarketer Report</a>
+                </li>
+                <li><a href="<?php echo $path; ?>user/stats.php">Stats</a>
+                </li>
+                <li><a href="<?php echo $path; ?>user/ship.php">Ship Item</a>
+                </li>
+                <?php } ?>
                 <li><a href="<?php echo $path; ?>user/logout.php">Logout</a>
                 </li>
+
             </ul>
           <?php } ?>
         </div><!--/.navbar-collapse -->
