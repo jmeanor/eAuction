@@ -12,9 +12,7 @@
 <div class="container">
         <div class="jumbotron hero-spacer">
             <h1>Welcome to eAuction!</h1>
-            <p>We're the most user-friendly auction website there is since 2014. Search for what you want to buy above, <a href="#">shop by category</a>, or check out the featured items below. </p>
-            <p><a class="btn btn-primary btn-large">Sign up!</a> 
-            </p>
+            <p>We're the most user-friendly auction website there is since 2014. Search for what you want to buy above, <a href="shop/results.php">shop by category</a>, or check out the featured items below. </p>
         </div>
 
         <hr>
@@ -27,54 +25,44 @@
         <!-- /.row -->
 
         <div class="row text-center">
-
+<?php
+	$query = "SELECT item_id, name, description 
+			  FROM items
+			  ORDER BY start_time DESC 
+			  LIMIT 4";
+	try 
+	{ 
+		// Execute the query against the database 
+		$stmt = $db->prepare($query); 
+		$result = $stmt->execute(); 
+	} 
+	catch(PDOException $ex) 
+	{ 
+		die($ex);
+	}
+	$data = $stmt->fetchAll(); 
+	foreach($data as $row)
+	{
+		$pics = getPics($row['item_id'], $db);
+?>
             <div class="col-lg-3 col-md-6 hero-feature">
                 <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
+<?php	if($pics['success'] == true)
+		{
+            echo "<img src='" . $pics['picture_data'][0]['url'] . "' alt=''>\n";
+		}
+?>
                     <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>This would be a great spot to feature some brand new products!</p>
-                        <p><a href="#" class="btn btn-primary">Buy Now!</a>  <a href="#" class="btn btn-default">More Info</a>
+                        <h3><?php echo $row['name'] ?></h3>
+                        <p><?php echo $row['description'] ?></p>
+                        <p><a class="btn btn-default btn-xs" href="shop/item.php?id=<?php echo $row['item_id']?>" name="option1" role="button">View details &raquo;</a>
                         </p>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-3 col-md-6 hero-feature">
-                <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
-                    <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>This would be a great spot to feature some brand new products!</p>
-                        <p><a href="#" class="btn btn-primary">Buy Now!</a>  <a href="#" class="btn btn-default">More Info</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 hero-feature">
-                <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
-                    <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>This would be a great spot to feature some brand new products!</p>
-                        <p><a href="#" class="btn btn-primary">Buy Now!</a>  <a href="#" class="btn btn-default">More Info</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 hero-feature">
-                <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
-                    <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>This would be a great spot to feature some brand new products!</p>
-                        <p><a href="#" class="btn btn-primary">Buy Now!</a>  <a href="#" class="btn btn-default">More Info</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
+<?php
+	}
+?>
 
 
         </div>

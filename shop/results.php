@@ -4,9 +4,8 @@
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      Luke Keniston
-    require_once("../inc/functions.php");
-    checkPermissions();
     require_once("../inc/header.php");
+    checkPermissions();
 
     if (!empty($_POST['search'])) {
 		$searchData = "%" . trim($_POST["search"]) . "%";
