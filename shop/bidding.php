@@ -25,7 +25,7 @@
 	}
 	elseif(floatval($item['item_data']['starting_price']) >= floatval('1.00'))
 	{
-		$min_bid = floatval($item['item_data']['starting_price']) * 1.05;
+		$min_bid = floatval($item['item_data']['starting_price']);
 	}
 	else
 	{
@@ -120,7 +120,8 @@
           </center>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-5">
-          <h2><b>Current Bid</b>: $<?php echo $highest_bid ?> <span class="badge"><?php echo $count ?></span><br />
+          <h2><b>Starting Price</b>: $<?php echo $item['item_data']['starting_price'] ?><br />
+		  <b>Current Bid</b>: $<?php echo $highest_bid ?> <span class="badge"><?php echo $count ?></span><br />
 		  <?php if($item['item_data']['buy_it_now_price'] != '0.00')
 		  {
 		  ?>

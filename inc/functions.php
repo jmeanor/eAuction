@@ -1179,8 +1179,7 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
 		$query = " 
             SELECT MAX(price) as max_price
             FROM bids
-            WHERE item_id = :item_id
-			
+            WHERE item_id = :item_id	
         "; 
          
         // The parameter values 
