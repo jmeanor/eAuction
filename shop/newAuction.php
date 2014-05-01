@@ -52,8 +52,6 @@
 
 		  if ($result['success'])
 		  {
-			$_SESSION['message']['type'] = "success";
-			$_SESSION['message']['content'] = "Item created successfully!";
 			header("Location: ../home.php"); 
 			die("Redirecting to: ../home.php"); 
 		  }
@@ -72,7 +70,10 @@
 			$submitted_location=$_POST['location'];
 			$submitted_url=$_POST['url'];
 			$submitted_template=$_POST['template'];
+			$submitted_picture=$_POST['pic'];
 		  }
+		  
+		  $pic_upload = upload_file($_POST['pic']);
 	  }
 	}
 ?>
@@ -111,6 +112,8 @@
 		<p><input type="radio" name="template" value="1"> 1</p>
 		<p><input type="radio" name="template" value="2"> 2</span></p>
 		<p><input type="radio" name="template" value="3"> 3</span></p>
+		<p>Upload Pictures!</p>
+		<p><input type="file" name="pic" accept="image/*" value="<?php echo $submitted_picture;?>"></p>
 
 
 	    <button  class="btn btn-lg btn-primary btn-block" type="submit">Create Auction</button> 

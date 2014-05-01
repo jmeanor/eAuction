@@ -44,26 +44,23 @@
         <div class="col-lg-3">
           <center>
 			  <?php if (!empty($pics['picture_data']))
-			  { 
-			  ?>    
+			  {
+					$counter = 1;
+			  ?>  	  
 					<ul class="pagination">	
-					<?php foreach ($pics['picture_data'] as $sm_info)
+					<?php foreach ($pics['picture_data'] as $pic_info)
 					{
 					?>
-						<img src="../<?php echo $sm_info['url']?>" height="200" width="200">
-						<li class="active"><a href="#"><span class="sr-only">(current)</span></a></li>
-						
+						<img class="img-thubmnail" src="../<?php echo $pic_info['url']?>" height="200">
+						<li class="active"><a><?php echo $counter ?> <span class="sr-only">(current)</span></a></li>	
 					<?php
+						$counter++;
 					}
-			  }
+					?>
+					</ul>
+				<?php
+				}
 			  ?>
-			             <img src="../<?php echo $pics['picture_data']['url']?>" height="200" width="200">
-            <ul class="pagination">
-              <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-              <li class="disabled"><a href="#">2</a></li>
-              <li class="disabled"><a href="#">3</a></li>
-              <li class="disabled"><a href="#">4</a></li>
-            </ul>
 
           </center>
         </div><!-- /.col-lg-4 -->

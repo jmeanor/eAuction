@@ -619,7 +619,7 @@
         else{
         	$data['success'] = false;
         	$data['message'] = "No ratings found for that user id number.";
-			$data['ratings_data'] ;
+			$data['ratings_data'] = null;
         	return $data;
         }
         return $data;
@@ -1117,6 +1117,95 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
 		}
 		return $count;
 	}
+	
+function addSM($user_id, $username, $sm_type, $db)
+	{
+	  $item_result = array('success' => false);
+	   
+	  // An INSERT query is used to add new rows to a database table. 
+	  // Again, we are using special tokens (technically called parameters) to 
+	  // protect against SQL injection attacks. 
+	  $query = " 
+	      INSERT INTO social_media (
+			  user_id,
+	          sm_type, 
+	          username
+			  
+	      ) VALUES ( 
+			  :user_id,
+	          :sm_type, 
+	          :username
+	      ) 
+	  "; 
+	  $query_params = array( 
+		  ':user_id' => $user_id,
+	      ':sm_type' => $sm_type, 
+	      ':username' => $username
+	  ); 
+	   
+	  try 
+	  { 
+	      // Execute the query to create the user 
+	      $stmt = $db->prepare($query); 
+	      $result = $stmt->execute($query_params); 
+	  } 
+	  
+	  catch(PDOException $ex) 
+	  {   
+	      // TODO:
+	      // Note: On a production website, you should not output $ex->getMessage(). 
+	      // It may provide an attacker with helpful information about your code.  
+	      die("Failed to run query: " . $ex->getMessage()); 
+	  }
+	  $item_result = array ('success' => true);
+	  return $item_result;
+}
+	
+function updateUser($user_id, $email, $phone, $description, $public_location, $url, $db)
+	{
+	  $item_result = array('success' => false);
+	   
+	  // An INSERT query is used to add new rows to a database table. 
+	  // Again, we are using special tokens (technically called parameters) to 
+	  // protect against SQL injection attacks. 
+	  $query = " 
+	      UPDATE users 
+		  SET email = :email,
+			  phone_number = :phone_number,
+			  description = :description,
+			  public_location = :public_location,
+			  url = :url
+		  WHERE user_id = :user_id 
+	  "; 
+	  $query_params = array( 
+		  ':user_id' => $user_id,
+	      ':email' => $email, 
+	      ':phone_number'=> $phone,
+	      ':description'=> $description,
+		  ':public_location'=> $public_location,
+		  ':url'=> $url
+	  ); 
+	   
+	  try 
+	  { 
+	      // Execute the query to update the user 
+	      $stmt = $db->prepare($query); 
+	      $result = $stmt->execute($query_params); 
+	  } 
+	  
+	  catch(PDOException $ex) 
+	  {   
+	      // TODO:
+	      // Note: On a production website, you should not output $ex->getMessage(). 
+	      // It may provide an attacker with helpful information about your code.  
+	      die("Failed to run query: " . $ex->getMessage()); 
+	  }
+	  $item_result = array ('success' => true);
+	  return $item_result;
+}	
+	
+	
+	
 	
 	   function uploadFile($fieldName)
    {      

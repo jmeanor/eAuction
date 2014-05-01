@@ -41,7 +41,7 @@
           <h3><span class="glyphicon glyphicon-user"></span> <?php echo $data['user_data']['username'] ?>
 		  <?php if (!empty($_SESSION['user']['user_id'])) 
 		  { ?>
-			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Information &raquo;</a>
+			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Contact Information &raquo;</a> <a class="btn btn-default btn-xs" href="../user/addSocialMedia.php" role="button"> Add Social Media &raquo;</a>
 		  <?php 
 		  } 
 		  ?>
@@ -52,23 +52,23 @@
 
       <div class="row">
 
-	  <?php if (!empty($sm_data))
+	  <?php if ($sm_data['success'] == true)
 	  { 
 	  ?>        
 		<div class="col-lg-4">
-	    <h3><span class="glyphicon glyphicon-comment"></span> <?php echo $data['user_data']['username'] ?>'s Social Media </h3>
+	    <h3><span class="glyphicon glyphicon-comment"></span> <?php echo $data['user_data']['username'] ?>'s Social Media</h3>
 		<hr>
 			
 		<?php foreach ($sm_data['sm_data'] as $sm_info)
 		{
-			if ($row['sm_data']['sm_type'] = "tw")
+			if ($sm_info['sm_type'] = "tw")
 			{
 			?>
 				<p><b>Twitter: </b> <?php echo $sm_info['username']?></p>
 			<?php
 			}
 			
-			else if ($row['sm_data']['sm_type'] = "fb")
+			else if ($sm_info['sm_data']['sm_type'] = "fb")
 			{
 			?>
 				<p><b>Facebook: </b> <?php echo $sm_info['username']?></p>
@@ -79,7 +79,7 @@
 	  ?>
       </div>
 
-      <?php if (!empty($ratings_score))
+      <?php if ($ratings_score['success'] == true && $ratings_data['success'] == true)
 		{
 		?>
 			<div class="col-lg-4">
@@ -102,7 +102,7 @@
         </div>
       </div>
 
-	  <?php if (!empty($item_data))
+	  <?php if ($item_data['success'] == true)
 	  {
 	  ?>
 	    <div class="row">
@@ -122,8 +122,22 @@
 					<div class="col-lg-1"></div>
 	  <?php 
 		for ($i = 0; $i<3; $i++) {
-			if (!empty($item_data['item_data'][$i]['name'])) { ?>
+			if (!empty($item_data['item_data'][$i]['name'])) { 
+				$pics = getPics($item_data['item_data'][$i]['item_id'], $db);?>
 					  <div class="col-lg-3">
+					<?php if ($pics['success'] == true)
+					{
+					?>
+					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image"></center>
+					<?php
+					}
+					else
+					{
+					?>
+						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image"></center>
+					<?php
+					}
+					?>					  
 						<h3><?php echo $item_data['item_data'][$i]['name'] ?></h3>
 						<p><?php echo $item_data['item_data'][$i]['description']?></p>
 						<p><a class="btn btn-default btn-xs" href="../shop/item.php?id=<?php echo $item_data['item_data'][$i]['item_id']?>" name="option1" role="button">View details &raquo;</a></p>
@@ -135,13 +149,13 @@
 			<div class='col-lg-2'></div>
 		</div>
 
-	  <?php if (!empty($ratings_data))
+	  <?php if ($ratings_data['success'] == true)
 	  {
 	  ?>
 	    <div class="row">
         <div class="col-lg-1"></div>
         <div class="col-lg-9">
-          <h3><span class="glyphicon glyphicon-shopping-cart"></span> <?php echo $data['user_data']['username'] ?>'s Ratings</h3>
+          <h3><span class="glyphicon glyphicon-ok"></span> <?php echo $data['user_data']['username'] ?>'s Ratings <a class="btn btn-default btn-xs" href="../user/userRatings.php?id=<?php echo $data['user_data']['user_id']?>" name="option1" role="button">See all &raquo;</a></h3>
           <hr>
           </div>
         <div class="col-lg-1"></div>
@@ -154,11 +168,25 @@
 					<div class="col-lg-1"></div>
 	  <?php 
 		for ($i = 0; $i<3; $i++) {
-			if (!empty($ratings_data['ratings_data'][$i]['name'])) { ?>
+			if (!empty($ratings_data['ratings_data'][$i]['name'])) { 
+				$pics = getPics($ratings_data['ratings_data'][$i]['item_id'], $db);?>
 					<div class="col-lg-3">
+					<?php if ($pics['success'] == true)
+					{
+					?>
+					<center><img height="200" src="../<?php echo $pics['picture_data'][0]['url']?>" alt="Generic placeholder image"></center>
+					<?php
+					}
+					else
+					{
+					?>
+						<center><img height="200" src="../shop/images/placeholder1.jpg" alt="Generic placeholder image"></center>
+					<?php
+					}
+					?>
 					<h3><?php echo $ratings_data['ratings_data'][$i]['name']?> : <?php echo $ratings_data['ratings_data'][$i]['score']?></h3>
 					<p><b>Customer Message: </b><?php echo $ratings_data['ratings_data'][$i]['description']?></p>
-					<p><b>Seller Response: </b><?php echo $ratings_data['ratings_data'][$i]['seller_response']?></p>
+					<p><b><?php echo $data['user_data']['name']?>'s Response: </b><?php echo $ratings_data['ratings_data'][$i]['seller_response']?></p>
 					</div>
 		<?php
 			}
