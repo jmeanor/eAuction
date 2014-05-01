@@ -10,13 +10,13 @@
 
     require_once("../inc/header.php");
 
-    if (!empty($_GET['userid'])) {
-	  $data = getProfileData($_GET['userid'], $db);
-	  $item_data = getItemData($_GET['userid'], $db);
-	  $ratings_data = getRatingsData($_GET['userid'], $db);
-	  $ratings_score = getRatingScore($_GET['userid'], $db);
-	  $item_count = getItemCount($_GET['userid'], $db);
-	  $sm_data = getSocialMedia($_GET['userid'], $db);
+    if (!empty($_GET['id'])) {
+	  $data = getProfileData($_GET['id'], $db);
+	  $item_data = getItemData($_GET['id'], $db);
+	  $ratings_data = getRatingsData($_GET['id'], $db);
+	  $ratings_score = getRatingScore($_GET['id'], $db);
+	  $item_count = getItemCount($_GET['id'], $db);
+	  $sm_data = getSocialMedia($_GET['id'], $db);
 	}
     else {
       $data = getProfileData($_SESSION['user']['user_id'], $db);
@@ -39,7 +39,7 @@
         <div class="col-lg-12">
           <h1><?php echo $data['user_data']['name'] ?></h1>
           <h3><span class="glyphicon glyphicon-user"></span> <?php echo $data['user_data']['username'] ?>
-		  <?php if (empty($_GET['userid'])) 
+		  <?php if (empty($_GET['id'])) 
 		  { ?>
 			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Contact Information &raquo;</a> <a class="btn btn-default btn-xs" href="../user/addSocialMedia.php" role="button"> Add Social Media &raquo;</a> <a class="btn btn-default btn-xs" href="../shop/newAuction.php" role="button"> Create an Auction &raquo;</a> <a class="btn btn-default btn-xs" href="../shop/editCard.php" role="button"> Add/Remove Credit Card &raquo;</a>
 		  <?php 
