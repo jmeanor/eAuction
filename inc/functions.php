@@ -848,7 +848,6 @@
         return $data;
 	}
 	
-<<<<<<< HEAD
 	function getCategoryName($categoryId, $db)
 	{
 	    $query = " 
@@ -1377,10 +1376,7 @@ function updateUser($user_id, $email, $phone, $description, $public_location, $u
 	  $item_result = array ('success' => true);
 	  return $item_result;
 }	
-	
-	
-	
-	
+		
 	   function uploadFile($fieldName)
    {      
       $_UPLOAD_URL = $_SERVER['DOCUMENT_ROOT'] . "/eAuction/shop/images";
