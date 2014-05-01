@@ -1254,6 +1254,49 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
         return $max_price;
 	}
 	
+	function recentBid($item_id, $user_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT price
+            FROM bids
+            WHERE item_id = :item_id 
+			AND price = (SELECT MAX(price) FROM bids WHERE item_id = :item_id AND card_id IN (SELECT card_id FROM credit_cards WHERE user_id = :user_id))
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id,
+			':user_id' => $user_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetch();
+        if ($row) {
+        	$max_price = $row['price'];
+			if($max_price == '')
+				$max_price = '0.00';
+        }
+        else{
+			$max_price = '0.00';
+        }
+        return $max_price;
+	}
+	
 	function itemsBought($user_id, $db)
 	{
 		$data = array();
@@ -1417,6 +1460,52 @@ function updateUser($user_id, $email, $phone, $description, $public_location, $u
 	  $item_result = array ('success' => true);
 	  return $item_result;
 }	
+
+	function checkIfOver($item_id, $db)
+	{
+		$data = array();
+		$data['success'] = false;
+
+		$query = " 
+            SELECT w.item_id
+            FROM won_items w
+            WHERE w.item_id = :item_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':item_id' => $item_id
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetchAll();
+        if ($row) {
+        	$data['success'] = true;
+        	$data['item_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No item found with that item id number.";
+			$data['item_data'] = null;
+        	return $data;
+        }
+        return $data;	
+	}	
+
+
 		
 	   function uploadFile($fieldName)
    {      
