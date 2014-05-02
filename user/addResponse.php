@@ -10,7 +10,7 @@
 	$ratings_data = getRatingsData($_GET['id'], $db);
 	
 	$submitted_response = "";
-	
+		
 	// If the user has entered form information to log in with.
     if (!empty($_POST))
     {
@@ -31,7 +31,6 @@
 			$_POST['message']['content'] = $result['message'];
 			$_POST['message']['type'] = "danger";
 
-			// Fill in the username field that the user tried to login with
 			$submitted_response= $_POST['response'];
 		  }		  
 	  }
