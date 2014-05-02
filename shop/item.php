@@ -9,6 +9,7 @@
 	$item_id = $_GET['id'];
 	
 	$test = itemInfo($item_id, $db);
+	
 	$pics = getPics($item_id, $db);
 	$total_bought = itemsBought($test['item_data']['seller_id'], $db);
     $item_count = getItemCount($test['item_data']['seller_id'], $db);
@@ -82,7 +83,18 @@ function slideshowBack()
     background-color: #eee;
   }
 </style>
-
+<?php
+	$template = $test['item_data']['template'];
+	switch($template)
+	{
+		case 2:
+			echo "<link rel=\"stylesheet\" href=\"../inc/css/template_2.css\" type=\"text/css\" media=\"screen\" />";
+		break;
+		case 3:
+			echo "<link rel=\"stylesheet\" href=\"../inc/css/template_3.css\" type=\"text/css\" media=\"screen\" />";
+		break;
+	}
+?>
     <div class="container">
 <?php	if($check['success'])
 		{

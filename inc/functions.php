@@ -809,7 +809,7 @@
 		$data['success'] = false;
 
 		$query = " 
-            SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.username, u.public_location
+            SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.username, u.public_location, i.template 
             FROM items i, users u
             WHERE i.item_id = :item_id
 			AND i.seller_id = u.user_id
