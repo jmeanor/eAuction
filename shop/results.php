@@ -72,7 +72,7 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-   			<p> Categories </p>
+   			<p><b>Categories</b></p>
    			<?php 
 		
 	
@@ -126,12 +126,13 @@
     ?>
     
     	<p/> 
+		<hr />
 		<form method="post" action="results.php">
-    	<p>Filter By:
+    	<p><b>Filter By:</b>
         	<input type="text" name="lowerPrice" placeholder="min price $" value="<?php echo $lowerPriceDisplayed ?>" />
         	<br />
         	<input type ="text" name="upperPrice" placeHolder="max price $" value="<?php echo $upperPriceDisplayed ?>" /></p>
-			<p>Sort By:<br />
+			<p><b>Sort By:</b><br />
 			<select name='sort'>
 				<option value='item' <?php echo ($sortOn == 'item' ? "selected='selected'" : '') ?> >Item Name</option>
 				<option value='bid' <?php echo ($sortOn == 'bid' ? "selected='selected'" : '') ?> >Bid Ends On</option>
