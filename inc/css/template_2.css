@@ -1,0 +1,13 @@
+h1, h2, h3, h4, p, a {
+	font-family: "Comic Sans MS";
+	font-weight: 1000;
+	color: red;
+}
+
+body {
+	background: url('http://www2.warnerbros.com/spacejam/movie/img/bg_stars.gif');
+}
+
+.badge {
+	background-color: red;
+}
