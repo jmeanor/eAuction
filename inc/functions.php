@@ -134,7 +134,7 @@
 	function getCategories($db)
 	{
         $query = "
-				SELECT * FROM categories";
+				SELECT * FROM categories WHERE category_id != 1 ORDER BY name";
         
         try 
         { 

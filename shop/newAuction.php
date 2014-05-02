@@ -123,7 +123,7 @@
         	</select>
         </p>
         <p><b>Optionally</b> add one of your own keywords, if it's not listed. <input class="form-control" type="text" name="new_kw"></input> </p>
-		<p>Add keywords to maximize your auction viewership. [Select multiple keywords by holding control (command on Mac), and clicking.]</p>
+		<p>Choose the category your item should be sold in.</p>
         	<p><select required name="category" class="form-control" size="6" >
         		<?php foreach ($categories as $category) { ?>
         		<option value="<?php echo $category['category_id']; ?>"><?php echo $category['name']; ?></option>
