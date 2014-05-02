@@ -65,14 +65,14 @@
 			
 		<?php foreach ($sm_data['sm_data'] as $sm_info)
 		{
-			if ($sm_info['sm_type'] = "tw")
+			if ($sm_info['sm_type'] == "tw")
 			{
 			?>
 				<p><b>Twitter: </b> <?php echo $sm_info['username']?></p>
 			<?php
 			}
 			
-			else if ($sm_info['sm_type'] = "fb")
+			else if ($sm_info['sm_type'] == "fb")
 			{
 			?>
 				<p><b>Facebook: </b> <?php echo $sm_info['username']?></p>
@@ -159,7 +159,7 @@
 	    <div class="row">
         <div class="col-lg-1"></div>
         <div class="col-lg-9">
-          <h3><span class="glyphicon glyphicon-ok"></span> <?php echo $data['user_data']['username'] ?>'s Ratings <a class="btn btn-default btn-xs" href="../user/userRatings.php?id=<?php echo $data['user_data']['user_id']?>" name="option1" role="button">See all &raquo;</a></h3>
+          <h3><span class="glyphicon glyphicon-ok"></span> <?php echo $data['user_data']['username'] ?>'s Ratings <a class="btn btn-default btn-xs" href="../user/userRatings.php?id=<?php echo $data['user_data']['user_id']?>" name="option1" role="button">See more details &raquo;</a></h3>
           <hr>
           </div>
         <div class="col-lg-1"></div>
@@ -190,7 +190,6 @@
 					?>
 					<h3><?php echo $ratings_data['ratings_data'][$i]['name']?> : <?php echo $ratings_data['ratings_data'][$i]['score']?></h3>
 					<p><b>Customer Message: </b><?php echo $ratings_data['ratings_data'][$i]['description']?></p>
-					<p><b><?php echo $data['user_data']['name']?>'s Response: </b><?php echo $ratings_data['ratings_data'][$i]['seller_response']?></p>
 					</div>
 		<?php
 			}

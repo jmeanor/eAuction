@@ -20,6 +20,13 @@
 	$submitted_name="";
 	
 	$card_data = getCards($data['user_data']['user_id'], $db);
+
+/*   	if(isset($_POST['phase']))	
+		$phase = $_POST['phase'];
+	elseif($is_over['success'])
+		$phase = 'bought';
+	else
+		$phase = ''; */
 	
     // If the user has entered form information to log in with.
     if (!empty($_POST))
@@ -67,6 +74,8 @@
               }
           }
     }
+	
+
 ?>
 </head>
     <body>
