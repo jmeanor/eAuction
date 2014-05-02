@@ -1,6 +1,6 @@
 <?php 
-    // Title:       shop/item.php
-    // Desc:        Displays individual item auction page.  
+    // Title:       shop/event_test.php
+    // Desc:        Page used for testing event creation when a new item is created  
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor

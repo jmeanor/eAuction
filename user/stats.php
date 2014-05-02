@@ -1,5 +1,5 @@
 <?php 
-    // Title:       stats.php
+    // Title:       user/stats.php
     // Desc:        Admin page to view overall system stats.
     // Date:        April 30, 2014
     // Version:     1.0

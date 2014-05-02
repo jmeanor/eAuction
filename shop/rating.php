@@ -1,5 +1,5 @@
 <?php 
-    // Title:       rating.php
+    // Title:       shop/rating.php
     // Desc:        Displays rating page. 
     // Date:        April 14, 2014
     // Version:     1.0

@@ -1,6 +1,6 @@
 <?php 
     // Title:       shop/newAuction.php
-    // Desc:        Displays bidding page.
+    // Desc:        Page used to create a new auction
     // Date:        April 14, 2014
     // Version:     1.0
     // Author:      Tom Byrne

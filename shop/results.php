@@ -1,5 +1,5 @@
 <?php 
-    // Title:       shop/item.php
+    // Title:       shop/results.php
     // Desc:        The action page that lists all the search results from the query bar.  
     // Date:        March 22, 2014
     // Version:     1.0

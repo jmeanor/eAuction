@@ -1,6 +1,6 @@
 <?php 
-    // Title:       home.php
-    // Desc:        Main display for logged in users.
+    // Title:       user/userItems.php
+    // Desc:        Displays items that user has put on sale
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor

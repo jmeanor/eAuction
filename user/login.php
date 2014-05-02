@@ -1,5 +1,10 @@
 <?php 
-
+    // Title:       user/login.php
+    // Desc:        Lets the user login to their account
+    // Date:        March 22, 2014
+    // Version:     1.0
+    // Author:      John Meanor
+	
     // First we execute our common code to connection to the database and start the session 
     require("../inc/db.php");
 

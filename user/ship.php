@@ -1,6 +1,6 @@
 <?php 
-    // Title:       home.php
-    // Desc:        Main display for logged in users.
+    // Title:       user/ship.php
+    // Desc:        Auction Administration, allows admin to ship items and update money exchanges
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor

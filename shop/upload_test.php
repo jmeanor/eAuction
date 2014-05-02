@@ -1,6 +1,6 @@
 <?php 
-    // Title:       shop/item.php
-    // Desc:        Displays individual item auction page.  
+    // Title:       shop/upload_test.php
+    // Desc:        Page used to test uploading images  
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor

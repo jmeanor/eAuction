@@ -1,5 +1,5 @@
 <?php 
-    // Title:       boughtItems.php
+    // Title:       user/boughtItems.php
     // Desc:        Displays the items that the user has bought.
     // Date:        March 22, 2014
     // Version:     1.0

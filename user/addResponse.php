@@ -1,6 +1,6 @@
 <?php 
-    // Title:       shop/item.php
-    // Desc:        Displays individual item auction page.  
+    // Title:       user/addResponse.php
+    // Desc:        Allows seller to respond to a user's rating of his item
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor

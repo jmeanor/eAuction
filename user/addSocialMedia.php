@@ -1,4 +1,10 @@
 <?php 
+    // Title:       user/addSocialMedia.php
+    // Desc:        Allows user to add Social Media accounts to their profile
+    // Date:        March 22, 2014
+    // Version:     1.0
+    // Author:      John Meanor
+	
   require_once("../inc/functions.php");
 
 	 if (!empty($_GET['userid'])) {

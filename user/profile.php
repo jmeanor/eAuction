@@ -1,6 +1,6 @@
 <?php 
-    // Title:       shop/item.php
-    // Desc:        Displays individual item auction page.  
+    // Title:       user/profile.php
+    // Desc:        Displays user's profile page
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor

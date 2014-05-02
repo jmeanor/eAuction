@@ -4,6 +4,7 @@
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor
+	
     require_once("../inc/functions.php");    
     require_once("../inc/header.php");
 	
