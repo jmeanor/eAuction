@@ -7,6 +7,14 @@
     require_once("../inc/functions.php");    
     require_once("../inc/header.php");
 	
+	if(!empty($_POST))
+	{
+		$item_id = $_GET['iid'];
+		$response = $_POST['response'];
+		
+		submitResponse($response, $item_id, $db);
+	}
+	
 	 if (!empty($_GET['id'])) {
 	  $data = getProfileData($_GET['id'], $db);
 	  $item_data = getItemData($_GET['id'], $db);
@@ -50,7 +58,7 @@
 				<div class="caption">
 					<h3><?php echo $item_info['name']?></h3>
 					<p><b>User's Rating: </b> <?php echo $item_info['description']?></p>
-					<?php if ($data['user_data']['user_id'] == $_SESSION['user']['user_id'])
+					<?php if ($data['user_data']['user_id'] == $_SESSION['user']['user_id'] && $item_info['seller_response'] == null)
 					{
 					?>
 						<a class="btn btn-default btn-xs" href="../user/addResponse.php?id=<?php echo $item_info['item_id']?>" role="button"> Respond to Rating &raquo;</a>
