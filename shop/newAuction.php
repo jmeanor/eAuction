@@ -67,6 +67,9 @@
 
 	      $result = create_item($submitted_user_id, $_POST['item_name'], $_POST['description'], $_POST['keywords'], $_POST['starting_price'], $_POST['buy_it_now_price'], $_POST['reserve_price'], $_POST['location'], $_POST['url'], $_POST['template'], $db);
 
+	      $pic_upload = uploadFile('pic', $result['item_id'], $db );
+	      if(!$pic_upload) die("NJASDLKAD");
+
 		  if ($result['success'])
 		  {
 			header("Location: item.php?id=".$result['item_id']); 
@@ -89,8 +92,6 @@
 			$submitted_template=$_POST['template'];
 			$submitted_picture=$_POST['pic'];
 		  }
-		  
-		  $pic_upload = upload_file($_POST['pic']);
 		  
 	  }
 	}
@@ -118,7 +119,7 @@
 		<?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; ?>
 	  </div>
 
-	  <form id="newitemform" class="form-create" action="newAuction.php" method="POST"> 
+	  <form id="newitemform" class="form-create" action="newAuction.php" method="POST" enctype="multipart/form-data"> 
 	    <div class="alert alert-info">All fields are required.</div>
         <p>Item Name: <input class="form-control" type="text" name="item_name" placeholder="Item Name"  value="<?php echo $submitted_item_name; ?>"/> </p>
         <p>Item Description: <input class="form-control" type="text" name="description" placeholder="Item Description" value="<?php echo $submitted_item_description; ?>" /> </p>

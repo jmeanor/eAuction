@@ -1711,47 +1711,76 @@ function submitResponse($seller_response, $item_id, $db)
 
 
 		
-	   function uploadFile($fieldName)
-   {      
-      $_UPLOAD_URL = $_SERVER['DOCUMENT_ROOT'] . "/eAuction/shop/images";
-         
-      if(!isset($_FILES[$fieldName]))
-      {
-         return false;
-      }
-      // Ensure the file exists
-      if($_FILES[$fieldName]['error'] > 0)
-      {
-         return false;
-      }
-      else
-      {
-         // Split by Slash
-         $fullName = explode('/', $_FILES[$fieldName]['name']);
-         $n = count($fullName)-1; // File name will be at the end of the array
-         
-         // Up to this point, if the function is still going, no errors have been found with the file, so now it's time to upload it
-         $newName = uniqid() . "-" . $fullName[$n];
-         $destination = $_UPLOAD_URL . "/$newName"; // uniqid generates a random string to add to the name of the file to protect against duplicates
-         $deststring = "images/$newName";
-         
-         // Ensure the destination directory exists
-         if(!is_dir($_UPLOAD_URL))
-         {
-            // Create the directory with the permissions already set so PHP can write to it
-            mkdir($_UPLOAD_URL, 0755);
-         }
-         
-         // Move the file
-         if(move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination))
-         {
-            // Return the location of the new file
-            return $deststring;
-         }
-         else
-         {
-            return false;
-         }
-      }
-   }	
+	   function uploadFile($fieldName, $item_id, $db)
+	   {      
+	      $_UPLOAD_URL = $_SERVER['DOCUMENT_ROOT'] . "/eAuction/shop/images";
+	         
+	      if(!isset($_FILES[$fieldName]))
+	      {
+	         return false;
+	      }
+	      // Ensure the file exists
+	      if($_FILES[$fieldName]['error'] > 0)
+	      {
+	         return false;
+	      }
+	      else
+	      {
+	         // Split by Slash
+	         $fullName = explode('/', $_FILES[$fieldName]['name']);
+	         $n = count($fullName)-1; // File name will be at the end of the array
+	         
+	         // Up to this point, if the function is still going, no errors have been found with the file, so now it's time to upload it
+	         $newName = uniqid() . "-" . $fullName[$n];
+	         $destination = $_UPLOAD_URL . "/$newName"; // uniqid generates a random string to add to the name of the file to protect against duplicates
+	         $deststring = "shop/images/$newName";
+	         
+	         // Ensure the destination directory exists
+	         if(!is_dir($_UPLOAD_URL))
+	         {
+	            // Create the directory with the permissions already set so PHP can write to it
+	            mkdir($_UPLOAD_URL, 0755);
+	         }
+	         
+	         // Move the file
+	         if(move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination))
+	         {
+	         	//die(var_dump("Made it"));
+
+	         	$query = " 
+		            INSERT INTO item_pictures
+		            (`item_id`, `url`) VALUES 
+		            (:item_id, :url);
+		        "; 
+		         
+		        // The parameter values 
+		        $query_params = array( 
+		            ':item_id' => $item_id,
+		            ':url' => $deststring
+		        ); 
+		         
+		        try 
+		        { 
+		            // Execute the query against the database 
+		            $stmt = $db->prepare($query); 
+		            $result = $stmt->execute($query_params); 
+		        } 
+		        catch(PDOException $ex) 
+		        { 
+		            die($ex);
+		        } 
+		         
+
+
+	            // Return the location of the new file
+	            return $deststring;
+	         }
+	         else
+	         {
+	         	//die(var_dump("Didn't make it"));
+
+	            return false;
+	         }
+	      }
+	   }	
 ?>
