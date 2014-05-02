@@ -809,7 +809,7 @@
 		$data['success'] = false;
 
 		$query = " 
-            SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.username, u.public_location
+            SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.user_id, u.username, u.public_location
             FROM items i, users u
             WHERE i.item_id = :item_id
 			AND i.seller_id = u.user_id
@@ -1385,6 +1385,52 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
 		return $count;
 	}
 	
+function addCard($user_id, $card_type, $card_number, $expiration, $db)
+	{
+	  $item_result = array('success' => false);
+	   
+	  // An INSERT query is used to add new rows to a database table. 
+	  // Again, we are using special tokens (technically called parameters) to 
+	  // protect against SQL injection attacks. 
+	  $query = " 
+	      INSERT INTO credit_cards (
+			  user_id,
+	          card_type, 
+	          card_number,
+			  expiration
+			  
+	      ) VALUES ( 
+			  :user_id,
+	          :card_type, 
+	          :card_number,
+			  :expiration
+	      ) 
+	  "; 
+	  $query_params = array( 
+		  ':user_id' => $user_id,
+	      ':card_type' => $card_type, 
+	      ':card_number' => $card_number,
+		  ':expiration' => $expiration,
+	  ); 
+	   
+	  try 
+	  { 
+	      // Execute the query to create the user 
+	      $stmt = $db->prepare($query); 
+	      $result = $stmt->execute($query_params); 
+	  } 
+	  
+	  catch(PDOException $ex) 
+	  {   
+	      // TODO:
+	      // Note: On a production website, you should not output $ex->getMessage(). 
+	      // It may provide an attacker with helpful information about your code.  
+	      die("Failed to run query: " . $ex->getMessage()); 
+	  }
+	  $item_result = array ('success' => true);
+	  return $item_result;
+}
+	
 function addSM($user_id, $username, $sm_type, $db)
 	{
 	  $item_result = array('success' => false);
@@ -1428,7 +1474,7 @@ function addSM($user_id, $username, $sm_type, $db)
 	  return $item_result;
 }
 	
-function updateUser($user_id, $email, $phone, $description, $public_location, $url, $db)
+function updateUser($user_id, $name, $email, $phone, $description, $public_location, $url, $db)
 	{
 	  $item_result = array('success' => false);
 	   
@@ -1437,7 +1483,8 @@ function updateUser($user_id, $email, $phone, $description, $public_location, $u
 	  // protect against SQL injection attacks. 
 	  $query = " 
 	      UPDATE users 
-		  SET email = :email,
+		  SET name = :name,
+			  email = :email,
 			  phone_number = :phone_number,
 			  description = :description,
 			  public_location = :public_location,
@@ -1446,6 +1493,7 @@ function updateUser($user_id, $email, $phone, $description, $public_location, $u
 	  "; 
 	  $query_params = array( 
 		  ':user_id' => $user_id,
+		  ':name' => $name,
 	      ':email' => $email, 
 	      ':phone_number'=> $phone,
 	      ':description'=> $description,
@@ -1476,10 +1524,9 @@ function submitResponse($seller_response, $item_id, $db)
 	  $item_result = array('success' => false);
 	   
 	  $query = " 
-	      UPDATE ratings 
-		  SET seller_response = :seller_response
-		  WHERE item_id = :item_id
-		  
+	      UPDATE ratings r 
+		  SET r.seller_response = :seller_response
+		  WHERE r.item_id = :item_id
 	  "; 
 	  $query_params = array( 
 		  ':seller_response' => $seller_response,
@@ -1500,8 +1547,8 @@ function submitResponse($seller_response, $item_id, $db)
 	      // It may provide an attacker with helpful information about your code.  
 	      die("Failed to run query: " . $ex->getMessage()); 
 	  }
-	  $item_result = array ('success' => true);
-	  return $item_result;
+	  $response_result = array ('success' => true);
+	  return $response_result;
 }	
 
 	function checkIfOver($item_id, $db)

@@ -41,7 +41,11 @@
           <h3><span class="glyphicon glyphicon-user"></span> <?php echo $data['user_data']['username'] ?>
 		  <?php if (empty($_GET['id'])) 
 		  { ?>
-			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Contact Information &raquo;</a> <a class="btn btn-default btn-xs" href="../user/addSocialMedia.php" role="button"> Add Social Media &raquo;</a> <a class="btn btn-default btn-xs" href="../shop/newAuction.php" role="button"> Create an Auction &raquo;</a> <a class="btn btn-default btn-xs" href="../shop/editCard.php" role="button"> Add/Remove Credit Card &raquo;</a> <a class="btn btn-default btn-xs" href="../user/boughtItems.php" role="button"> View Bought Items&raquo;</a>
+			<a class="btn btn-default btn-xs" href="../user/updateInfo.php" role="button"> Update Your Contact Information &raquo;</a> <a class="btn btn-default btn-xs" href="../user/addSocialMedia.php" role="button"> Add Social Media &raquo;</a> <a class="btn btn-default btn-xs" href="../shop/newAuction.php" role="button"> Create an Auction &raquo;</a> 
+			<?php if ($data['user_data']['user_type'] == "person") 
+			{?>
+			  <a class="btn btn-default btn-xs" href="../shop/editCard.php" role="button">Add/Remove Credit Card &raquo;</a> <a class="btn btn-default btn-xs" href="../user/boughtItems.php" role="button"> View Bought Items&raquo;</a>
+			<?php } ?>
 		  <?php 
 		  } 
 		  ?>

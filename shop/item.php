@@ -7,6 +7,7 @@
 
     require_once("../inc/header.php");
 	$item_id = $_GET['id'];
+	$data = getProfileData($_SESSION['user']['user_id'], $db);
 	
 	$test = itemInfo($item_id, $db);
 	$pics = getPics($item_id, $db);
@@ -147,7 +148,7 @@ function slideshowBack()
 		  }
 		  ?>
           <h1></h1>
-		  <?php if ($check['success'] == false)
+		  <?php if ($check['success'] == false && ($data['user_data']['user_id'] != $test['item_data']['user_id']))
 		  {?>
 			<center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php?id=<?php echo $item_id ?>" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
           <?php

@@ -144,6 +144,7 @@
           <?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; ?>
         </div>
 
+
         <form id="updateform" class="form-signin" action="updateInfo.php" method="POST"> 
           <h2 class="form-signin-heading">Update Information</h2>
             <input class="form-control" type="text" name="name" placeholder="Name" value="<?php echo $submitted_name?>" />
