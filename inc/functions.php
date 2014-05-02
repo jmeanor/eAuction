@@ -1160,7 +1160,6 @@
 	function create_item($user_id, $item_name, $item_description, $keywords, $starting_price, $buy_it_now_price, $reserve_price, $location, $url, $template, $db)
 	{
 	  $item_result = array('success' => false);
-	  $start_time = date("Y-m-d H:i:s"); 
 	  // An INSERT query is used to add new rows to a database table. 
 	  // Again, we are using special tokens (technically called parameters) to 
 	  // protect against SQL injection attacks. 
@@ -1184,7 +1183,7 @@
 	          :starting_price, 
 	          :buy_it_now_price,
 			  :reserve_price,
-			  :start_time,
+			  NOW(),
 	          :location,
 			  :url,
 			  :template
@@ -1194,10 +1193,9 @@
 		  ':user_id' => $user_id,
 	      ':item_name' => $item_name, 
 	      ':item_description' => $item_description, 
-	      ':starting_price'=> $starting_price,
-	      ':buy_it_now_price'=> $buy_it_now_price,
-		  ':reserve_price'=> $reserve_price,
-		  ':start_time'=> $start_time,
+	      ':starting_price'=> floatval(str_replace('$', '', trim($starting_price))),
+	      ':buy_it_now_price'=> floatval(str_replace('$', '', trim($buy_it_now_price))),
+		  ':reserve_price'=> floatval(str_replace('$', '', trim($reserve_price))),
 	      ':location'=> $location,
 		  ':url'=> $url,
 		  ':template'=> $template
