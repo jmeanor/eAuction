@@ -1,6 +1,6 @@
 <?php 
-    // Title:       home.php
-    // Desc:        Main display for logged in users.
+    // Title:       userRatings.php
+    // Desc:        Displays Ratings for users
     // Date:        March 22, 2014
     // Version:     1.0
     // Author:      John Meanor
@@ -28,7 +28,7 @@
 ?>
 
 <div class="container">
-    <h1><?php echo $data['user_data']['username']?>'s Ratings</h1>
+    <h1><?php echo $data['user_data']['username']?>'s Bought Items</h1>
     <hr>
 		
     <!-- /.row -->

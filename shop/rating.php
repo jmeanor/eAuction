@@ -1,12 +1,17 @@
 <?php 
-    // Title:       shop/rating.php
+    // Title:       rating.php
     // Desc:        Displays rating page. 
     // Date:        April 14, 2014
     // Version:     1.0
     // Author:      Tom Byrne
 
     require_once("../inc/header.php");
-  
+	if (!empty($_GET['id'])) {
+	  $data = getProfileData($_GET['id'], $db);
+	}
+    else {
+      $data = getProfileData($_SESSION['user']['user_id'], $db);
+    }
   // If the user has entered form information to log in with.
     if (!empty($_POST))
     {
@@ -23,28 +28,27 @@
     }
 
 
-        if($fields_ok) {
-            $result = submit_rating($_POST['item_id'], $_POST['buyer_id'], $_POST['score'], $_POST['description'], $db)
-              if ($result['success'])
-              {
-				
-              }
-              else 
-              {
-                // Set error message 
-                $_POST['message']['content'] = $result['message'];
-                $_POST['message']['type'] = "danger";
+	if($fields_ok) {
+		$result = submit_rating($_POST['item_id'], $_POST['buyer_id'], $_POST['score'], $_POST['description'], $db)
+	  if ($result['success'])
+	  {
+		
+	  }
+	  else 
+	  {
+		// Set error message 
+		$_POST['message']['content'] = $result['message'];
+		$_POST['message']['type'] = "danger";
 
-                // Fill in the username field that the user tried to login with
-                $submitted_username = $_POST['username'];
-                $submitted_name= $_POST['name'];
-                $submitted_phone=$_POST['username'];
-                $submitted_description=$_POST['description'];
-                $submitted_public_loc=$_POST['public_location'];
-                $submitted_url=$_POST['url'];
-              }
-          }
-    }
+		// Fill in the username field that the user tried to login with
+		$submitted_username = $_POST['username'];
+		$submitted_name= $_POST['name'];
+		$submitted_phone=$_POST['username'];
+		$submitted_description=$_POST['description'];
+		$submitted_public_loc=$_POST['public_location'];
+		$submitted_url=$_POST['url'];
+	  }
+	} 
   
 ?>
 

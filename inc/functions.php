@@ -558,6 +558,50 @@
         return $data;
 	}
 	
+	function ItemRatingsData($itemid, $db) {
+		$data = array();
+		$data['success'] = false;
+
+		// Query to gather ratings information
+		$query = " 
+            SELECT i.name, r.item_id, i.seller_id, r.score, r.description, r.seller_response  
+            FROM items i, ratings r
+            WHERE 
+                i.item_id = :itemid
+				AND i.item_id = r.item_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':itemid' => $itemid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+        
+        $row = $stmt->fetchAll(); 
+        if ($row) {
+        	$data['success'] = true;
+        	$data['ratings_data'] = $row;
+        }
+		
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No ratings found for that user.";
+			$data['ratings_data'] = null;
+        	return $data;
+        }
+        return $data;
+	}
+	
 	function getCards($userid, $db) {
 		$data = array();
 		$data['success'] = false;
@@ -1752,6 +1796,51 @@ function submitResponse($seller_response, $item_id, $db)
         }
         return $data;	
 	}
+	
+	function getBoughtItems($userid, $db) {
+		$data = array();
+		$data['success'] = false;
+		$query = " 
+            SELECT i.item_id, i.name, i.description
+            FROM items i, won_items w, bids b
+            WHERE b.card_id IN (SELECT card_id FROM credit_cards WHERE user_id=:userid)
+			AND i.item_id = w.item_id
+			AND w.winning_bid = b.bid_id
+        "; 
+         
+        // The parameter values 
+        $query_params = array( 
+            ':userid' => $userid
+        ); 
+         
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $result = $stmt->execute($query_params); 
+        } 
+        catch(PDOException $ex) 
+        { 
+            die($ex);
+        } 
+         
+         
+        // Retrieve the user data from the database.  If $row is false, then the username 
+        // they entered is not registered. 
+        $row = $stmt->fetchAll();
+        if ($row) {
+        	$data['success'] = true;
+        	$data['item_data'] = $row;
+        }
+        else{
+        	$data['success'] = false;
+        	$data['message'] = "No items found.";
+			$data['item_data'] = null;
+        	return $data;
+        }
+        return $data;
+	}	
+	
 		
 	   function uploadFile($fieldName, $item_id, $db)
 	   {      
