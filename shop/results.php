@@ -22,17 +22,9 @@
 	  	$category_id = 1;
 	}
 	
-	if (!empty($_POST['itemType'])) 
+	if (!empty($_POST['lowerPrice']) && floatval(str_replace('$', '', trim($_POST['lowerPrice']))) > 0) 
 	{
-		$itemType = $_POST['itemType'];	
-	}
-	else {
-	  	$itemType = 'Both';
-	}
-	
-	if (!empty($_POST['lowerPrice']) && $_POST['lowerPrice'] > 0) 
-	{
-		$lowerPriceBound = $_POST['lowerPrice'];
+		$lowerPriceBound = floatval(str_replace('$', '', trim($_POST['lowerPrice'])));
 		$lowerPriceDisplayed = $_POST['lowerPrice'];
 	}
 	else 
@@ -41,9 +33,9 @@
 	  	$lowerPriceDisplayed = "";
 	}
 	
-	if (!empty($_POST['upperPrice']) && $_POST['upperPrice'] > 0) 
+	if (!empty($_POST['upperPrice']) && floatval(str_replace('$', '', trim($_POST['upperPrice']))) > 0) 
 	{
-		$upperPriceBound = $_POST['upperPrice'];
+		$upperPriceBound = floatval(str_replace('$', '', trim($_POST['upperPrice'])));
 		$upperPriceDisplayed = $_POST['upperPrice'];
 	}
 	else {
@@ -58,13 +50,16 @@
 	
 	}
 	
-	
-    if (!empty($_GET['userid'])) {
-      $data = getProfileData($_GET['userid'], $db);
-    }
-    else {
-      $data = getProfileData($_SESSION['user']['user_id'], $db);
-    }
+	if(!empty($_POST['sort']))
+	{
+		$sortOn = $_POST['sort'];
+		$sortDir = $_POST['sort_dir'];
+	}
+	else
+	{
+		$sortOn = 'item';
+		$sortDir = 'asc';
+	}
     
     $parent_id = getParentId($category_id, $db);
 
@@ -131,19 +126,21 @@
     ?>
     
     	<p/> 
-    	<p> Price filter </p>
 		<form method="post" action="results.php">
-        	<input type="text" name="lowerPrice" placeholder="min price $" value=<?php echo $lowerPriceDisplayed ?> >
-        	<p/>
-        	<br/>
-        	<input type ="text" name="upperPrice" placeHolder="max price $" value=<?php echo $upperPriceDisplayed ?> >  
-    	
-    	<p> Item Filter </p>
-    		
-    		<input type="radio" name="itemType" value ="Both" <?php echo ($itemType =='Both')?'checked':'' ?> > Both</input><br/>
-			<input type="radio" name="itemType" value="BuyItNow" <?php echo ($itemType =='BuyItNow')?'checked':'' ?> > Buy It Now Only</input><br/>
-			<input type="radio" name="itemType" value="BidOnly" <?php echo ($itemType =='BidOnly')?'checked':'' ?> > Bid Only</input><br/><br/>
-			<button type="submit" class="">Filter</button>  
+    	<p>Filter By:
+        	<input type="text" name="lowerPrice" placeholder="min price $" value="<?php echo $lowerPriceDisplayed ?>" />
+        	<br />
+        	<input type ="text" name="upperPrice" placeHolder="max price $" value="<?php echo $upperPriceDisplayed ?>" /></p>
+			<p>Sort By:<br />
+			<select name='sort'>
+				<option value='item' <?php echo ($sortOn == 'item' ? "selected='selected'" : '') ?> >Item Name</option>
+				<option value='bid' <?php echo ($sortOn == 'bid' ? "selected='selected'" : '') ?> >Bid Ends On</option>
+				<option value='buy-it-now' <?php echo ($sortOn == 'buy-it-now' ? "selected='selected'" : '') ?> >Buy It Now Price</option>
+				<option value='price' <?php echo ($sortOn == 'price' ? "selected='selected'" : '') ?> >Price</option>
+			</select><br />
+			<input type='radio' name='sort_dir' value='asc' <?php echo ($sortDir == 'asc' ? "checked" : '') ?> /> Ascending<br />
+			<input type='radio' name='sort_dir' value='desc' <?php echo ($sortDir == 'desc' ? "checked" : '') ?> /> Descending</p>
+			<button type="submit" class="">Go</button>  
 		</form> 
 		
 		
@@ -151,29 +148,23 @@
           </ul>
 		
         </div>
-        <div class="col-sm-9 col-md-10 main">
-<?php 
-
-
-         
-       
-   ?>     
+        <div class="col-sm-9 col-md-10 main">  
         <h2 class="sub-header">Search Results</h2>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Item name</th>
-                  <th>Bid ends on:</th>
+                  <th>Image</th>
+				  <th>Item Name</th>
+                  <th>Bid Ends On</th>
                   <th>Buy It Now Price</th>
                   <th>Price</th>
                 </tr>
               </thead>
               <tbody> 
-                <?php  getSearchResults($category_id, $searchData, $itemType, $lowerPriceBound , $upperPriceBound, $db); ?> 
+                <?php $ids = getSearchResults($category_id, $category_id, $db);
+					  displayItemsForSearch($ids, $searchData, $lowerPriceBound, $upperPriceBound, $sortOn, $sortDir, $db); ?> 
 			</tbody>
-
-	</thread>
     </table>   
       </div>
     </div>
