@@ -152,12 +152,7 @@
 		
         </div>
         <div class="col-sm-9 col-md-10 main">
-<?php 
 
-
-         
-       
-   ?>     
         <h2 class="sub-header">Search Results</h2>
           <div class="table-responsive">
             <table class="table table-striped">

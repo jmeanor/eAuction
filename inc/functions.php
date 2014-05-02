@@ -108,6 +108,28 @@
 
 	}
 
+	function getKeywords($db)
+	{
+        $query = "
+				SELECT * FROM keywords";
+        
+        try 
+        { 
+            // Execute the query against the database 
+            $stmt = $db->prepare($query); 
+            $stmt->execute();
+        } 
+        catch(PDOException $ex) 
+        { 
+        	//die(var_dump
+            die($ex);
+        } 
+        
+        $result = $stmt->fetchAll();
+        
+        return $result;
+	
+	} 
 
 	function getCategoryStats($db) {
 		$data = array();
@@ -1072,9 +1094,35 @@
 	    	?> </tr> <?php
         }
     }  
+
+    function addNewKeyword($new_kw, $db) {
+    	$query = " 
+	      INSERT INTO keywords (`keyword`) VALUES (:keyword); ";
+
+	     $query_params = array( 
+		  ':keyword' => $new_kw
+	  	); 
+	   
+		  try 
+		  { 
+		      // Execute the query to create the user 
+		      $stmt = $db->prepare($query); 
+		      $result = $stmt->execute($query_params); 
+		  } 
+		  
+		  catch(PDOException $ex) 
+		  {   
+		      // TODO:
+		      // Note: On a production website, you should not output $ex->getMessage(). 
+		      // It may provide an attacker with helpful information about your code.  
+		      die("Failed to run query: " . $ex->getMessage()); 
+		  }
+		  
+
+    }
     
 	
-	function create_item($user_id, $item_name, $item_description, $starting_price, $buy_it_now_price, $reserve_price, $location, $url, $template, $db)
+	function create_item($user_id, $item_name, $item_description, $keywords, $starting_price, $buy_it_now_price, $reserve_price, $location, $url, $template, $db)
 	{
 	  $item_result = array('success' => false);
 	  $start_time = date("Y-m-d H:i:s"); 
@@ -1157,8 +1205,39 @@
 	      // It may provide an attacker with helpful information about your code.  
 	      die("Failed to run query: " . $ex->getMessage()); 
 	  }	  
+
+
+
+	  foreach ( $keywords as $keyword ) {
+
+		  $query = "
+		  		INSERT INTO items_with_keywords (`item_id`, `keyword`) 
+		  		VALUES (:itemid, :keyword); ";
+
+		  $query_params = array( 
+		  		':itemid' => $itemid,
+		  		':keyword' => $keyword
+		  	);
+		  
+
+		  try 
+		  { 
+		      // Execute the query to create the user 
+		      $stmt = $db->prepare($query); 
+		      $result = $stmt->execute($query_params); 
+		  } 
+		  
+		  catch(PDOException $ex) 
+		  {   
+		      // TODO:
+		      // Note: On a production website, you should not output $ex->getMessage(). 
+		      // It may provide an attacker with helpful information about your code.  
+		      die("Failed to run query: " . $ex->getMessage()); 
+		  }	  
+	}
 	  
-	  $item_result = array ('success' => true);
+	  
+	  $item_result = array ('success' => true, 'item_id' => $itemid);
 	  return $item_result;
 }
 
