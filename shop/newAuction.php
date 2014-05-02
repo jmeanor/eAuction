@@ -28,6 +28,8 @@
 	// Get the keywords available for the user to use. 
 	$keywords = getKeywords($db);
 	
+	$categories = getCategories($db);
+	
 	// If the user has entered form information to log in with.
     if (!empty($_POST))
     {
@@ -50,14 +52,6 @@
             $fields_ok = false;
         } 
 
-        // Ensure that the user has entered a non-empty item name 
-        if(empty($_POST['keywords'])) 
-        {   
-            $_POST['message']['content'] = "Please select at least one keyword."; 
-            $_POST['message']['type'] = "danger";
-            $fields_ok = false;
-        } 
-
 	    if($fields_ok) {
 	    	//if there's a new kw to add to the database, add it first.
 	    	if($_POST['new_kw']!= "") {
@@ -65,7 +59,7 @@
 	    		array_push($_POST['keywords'], $_POST['new_kw']);
 	    	}
 
-	      $result = create_item($submitted_user_id, $_POST['item_name'], $_POST['description'], $_POST['keywords'], $_POST['starting_price'], $_POST['buy_it_now_price'], $_POST['reserve_price'], $_POST['location'], $_POST['url'], $_POST['template'], $db);
+	      $result = create_item($submitted_user_id, $_POST['item_name'], $_POST['description'], $_POST['keywords'], $_POST['category'], $_POST['starting_price'], $_POST['buy_it_now_price'], $_POST['reserve_price'], $_POST['location'], $_POST['url'], $_POST['template'], $db);
 
 	      $pic_upload = uploadFile('pic', $result['item_id'], $db );
 	      if(!$pic_upload) die("NJASDLKAD");
@@ -122,13 +116,20 @@
         <p>Item Name: <input class="form-control" type="text" name="item_name" placeholder="Item Name"  value="<?php echo $submitted_item_name; ?>"/> </p>
         <p>Item Description: <input class="form-control" type="text" name="description" placeholder="Item Description" value="<?php echo $submitted_item_description; ?>" /> </p>
         <p>Add keywords to maximize your auction viewership. [Select multiple keywords by holding control (command on Mac), and clicking.]</p>
-        	<p><select required name="keywords[]" class="form-control" multiple size="6" >
+        	<p><select name="keywords[]" class="form-control" multiple size="6" >
         		<?php foreach ($keywords as $keyword) { ?>
         		<option value="<?php echo $keyword['keyword']; ?>"><?php echo $keyword['keyword']; ?></option>
         		<?php } ?>
         	</select>
         </p>
         <p><b>Optionally</b> add one of your own keywords, if it's not listed. <input class="form-control" type="text" name="new_kw"></input> </p>
+		<p>Add keywords to maximize your auction viewership. [Select multiple keywords by holding control (command on Mac), and clicking.]</p>
+        	<p><select required name="category" class="form-control" size="6" >
+        		<?php foreach ($categories as $category) { ?>
+        		<option value="<?php echo $category['category_id']; ?>"><?php echo $category['name']; ?></option>
+        		<?php } ?>
+        	</select>
+        </p>
         <p>Starting Price: <input class="form-control" type="text" name="starting_price" placeholder="Starting Price" value="<?php echo $submitted_starting_price; ?>" /> </p>
         <p>Buy-It-Now Price: <input class="form-control" type="text" name="buy_it_now_price" placeholder="Buy It Now Price" value="<?php echo $submitted_buy_it_now_price; ?>" />  </p>
 		<p>Reserve Price: <input class="form-control" type="text" name="reserve_price" placeholder="Reserve Price" value="<?php echo $submitted_reserve_price; ?>" />  </p>
