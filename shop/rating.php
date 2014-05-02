@@ -30,7 +30,7 @@
       </div>    
 	    <div class="col-lg-6">
 		<p>Feedback consists of a numeric score from 1.0 to 10.0 (example: 5.10) and a text response.</p>
-		<form id="responseform" class="form-create" action="../user/boughtItems.php?id=<?php echo $_GET['id'] ?>&iid=<?php echo $_GET['id']?>" method="POST"> 
+		<form id="responseform" class="form-create" action="../user/boughtItems.php?id=<?php echo $_GET['id'] ?>&iid=<?php echo $_GET['iid']?>" method="POST"> 
 			<p><b>Score:</b> <input type='text' name='score' placeholder="Between 1.0 and 10.0" /></p>
 			<p><b>Feedback:</b> <textarea class="form-control" name="feedback"></textarea></p>
 			<button  class="btn btn-lg btn-primary btn-block" type="submit">Submit Feedback</button> 
