@@ -18,8 +18,6 @@
 	$submitted_number="";
 	$submitted_expiration="";
 	$submitted_name="";
-	
-	$card_data = getCards($data['user_data']['user_id'], $db);
 
   	if(isset($_POST['phase']))	
 		$phase = $_POST['phase'];
@@ -76,8 +74,35 @@
 	}
 	elseif($phase == 'delete')
 	{
-
+		$card_id = $_POST['card_id'];
+		$query = "DELETE FROM credit_cards WHERE card_id=:card_id";
+		$query_params = array(':card_id' => $card_id);
+		try 
+		{ 
+			// Execute the query against the database 
+			$stmt = $db->prepare($query); 
+			$result = $stmt->execute($query_params); 
+			$success = true;
+		} 
+		catch(PDOException $ex) 
+		{ 
+			$success = false;
+		}
+		if($success)
+		{
+			$_POST['message']['content'] = "Card deleted successfully!"; 
+			$_POST['message']['type'] = "success";
+		}
+		else
+		{
+			$_POST['message']['content'] = "Cannot delete a card that has been used to bid on items!"; 
+			$_POST['message']['type'] = "danger";
+		}
+		
+		$phase = '';
 	}
+	
+	$card_data = getCards($data['user_data']['user_id'], $db);
 	
 	if($phase == '')
 	{
@@ -95,12 +120,14 @@
 				}
 ?>
         </div>
-
+		<form id="newcard" class="form-signin" action="editCard.php" method="POST">
+		<input type='hidden' id='phase' name='phase' value='' />
+		<input type='hidden' id='card_id' name='card_id' value='' />
 		<div class="row">
 			<div class="col-sm-12">
 				<?php if ($card_data['success'] == false) 
 					  {
-						echo $report['message']; 
+						echo '<div class="alert alert-info">There are no credit cards on file.</div>'; 
 					  }
 					  else 
 					  { ?>
@@ -119,7 +146,7 @@
 						<td><?php echo $row['card_number']; ?></td>
 						<td><?php echo $row['expiration']; ?></td>
 						<td><?php echo $data['user_data']['name']; ?></td>
-						<td><button  class="btn btn-sm btn-primary btn-block" type="submit" onclick="document.getElementById('phase').value = 'delete';">Delete</button></tr>
+						<td><button  class="btn btn-sm btn-primary btn-block" type="submit" onclick="document.getElementById('phase').value = 'delete'; document.getElementById('card_id').value = '<?php echo $row['card_id'] ?>';">Delete</button></tr>
 					<?php }
 					  }?>
 				</table>
@@ -127,7 +154,6 @@
 		</div>
 		
 		<div class="col-sm-4">
-        <form id="newcard" class="form-signin" action="editCard.php" method="POST"> 
           <h2 class="form-signin-heading">Add a Card</h2>
 			<select name="type">
 			  <option value="Visa">Visa</option>
@@ -140,10 +166,10 @@
             <input class="form-control" type="text" name="expiration" placeholder="Card Expiration (mm/yy)" value="<?php echo $submitted_expiration?>" /> 
             <input class="form-control" type="text" name="name" placeholder="Name on Card" value="<?php echo $data['user_data']['name'] ?>"/>
             <br />
-            <button  class="btn btn btn-primary btn-block" type="submit" >Add Card</button>
+            <button class="btn btn btn-primary btn-block" type="submit" onclick="document.getElementById('phase').value = 'add';" >Add Card</button>
         </form>
       </div>
 	</div>
-<?php}
+<?php }
 
 require_once("../inc/footer.php"); ?>

@@ -232,7 +232,7 @@
 		else
 		{
 		?>
-		<p>You must have a card on file in order to bid.</p>
+		<p>You must have a card on file in order to bid. <a class="btn btn-default" href="../shop/editCard.php" type="button">Add a card</a></p>
 		<?php
 		}
 		?>
