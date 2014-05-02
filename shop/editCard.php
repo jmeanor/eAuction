@@ -26,10 +26,9 @@
 	else
 		$phase = '';
 	
-    // If the user has entered form information to log in with.
-    if (!empty($_POST))
-    {
-        // variable used to determine if form is okay to submit to API
+	if($phase == 'add')
+	{
+		// variable used to determine if form is okay to submit to API
         $fields_ok = true;
 		
         if(empty($_POST['number'])) 
@@ -53,90 +52,31 @@
             $fields_ok = false;
         }         
 
-        if($fields_ok) {
+        if($fields_ok)
+		{
             
-            $result = addCard($data['user_data']['user_id'], $_POST['type'], $_POST['number'], $_POST['expiration'], $db);
+			$result = addCard($data['user_data']['user_id'], $_POST['type'], $_POST['number'], $_POST['expiration'], $db);
 
-              if ($result['success'])
-              {
-                header("Location: editCard.php"); 
-                die("Redirecting to: editCard.php"); 
-              }
-              else 
-              {
-                // Fill in the username field that the user tried to login with
-				$submitted_type=$_POST['type'];
-                $submitted_number=$_POST['number'];
-                $submitted_expiration=$_POST['expiration'];
-                $submitted_name=$_POST['name'];
-              }
-          }
-    }
-	
-	if($phase == 'bid')
-	{
-		$user_bid = floatval(str_replace('$', '', trim($_POST['bid'])));
-		$card_id = $_POST['card'];
-		if($user_bid < $min_bid)
-		{
-			$message = "You must enter a valid bid that is greater or equal to the minimum bid, $" . number_format($min_bid, 2) . "!";
-			$success = "danger";
-		}
-		else
-		{
-			$query = "INSERT INTO bids (item_id, card_id, bid_type, bid_datetime, price) VALUES
-					  (:item_id, :card_id, :bid_type, NOW(), :price)";
-			$query_params = array(':item_id' => $item_id,
-								  ':card_id' => $card_id,
-								  ':bid_type' => 'bid',
-								  ':price' => $user_bid);
-								  
-			try 
-			{ 
-				// Execute the query against the database 
-				$stmt = $db->prepare($query); 
-				$result = $stmt->execute($query_params); 
-			} 
-			catch(PDOException $ex) 
-			{ 
-				die($ex);
+			if ($result['success'])
+			{
+				$_POST['message']['content'] = "Card added successfully!"; 
+				$_POST['message']['type'] = "success";
 			}
-			
-			$highest_bid = highestBid($item_id, $db);
-			$min_bid = floatval($highest_bid) * 1.05;
-			$message = "Thank you for bidding!";
+			else 
+			{
+			// Fill in the username field that the user tried to login with
+				$submitted_type=$_POST['type'];
+				$submitted_number=$_POST['number'];
+				$submitted_expiration=$_POST['expiration'];
+				$submitted_name=$_POST['name'];
+			}
 		}
 		
 		$phase = '';
 	}
-	elseif($phase == 'buy')
+	elseif($phase == 'delete')
 	{
-		$card_id = $_POST['card'];
-		$query = "INSERT INTO bids (item_id, card_id, bid_type, bid_datetime, price) VALUES
-				  (:item_id, :card_id, :bid_type, NOW(), :price)";
-		$query_params = array(':item_id' => $item_id,
-							  ':card_id' => $card_id,
-							  ':bid_type' => 'buy-it-now',
-							  ':price' => $item['item_data']['buy_it_now_price']);
-							  
-		try 
-		{ 
-			// Execute the query against the database 
-			$stmt = $db->prepare($query); 
-			$result = $stmt->execute($query_params); 
-		} 
-		catch(PDOException $ex) 
-		{ 
-			die($ex);
-		}
-		
-		$query = "CALL proc_endAuction($item_id)";
-		$db->exec($query);
-		
-		$query = "DROP EVENT IF EXISTS item_event_$item_id";
-		$db->exec($query);
-		
-		$phase = 'bought';
+
 	}
 	
 	if($phase == '')
@@ -145,12 +85,25 @@
       <div class="container">
         <div class="row">
           <h1></h1>
-          <?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; ?>
+          <?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") 
+				{
+					echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; 
+				}
+				elseif(isset($_POST['message']) && $_POST['message']['type'] == 'success')
+				{
+					echo '<div class="alert alert-success">'.$_POST['message']['content'].'</div>'; 
+				}
+?>
         </div>
 
 		<div class="row">
 			<div class="col-sm-12">
-				<?php if ($card_data['success'] == false) echo $report['message']; else { ?>
+				<?php if ($card_data['success'] == false) 
+					  {
+						echo $report['message']; 
+					  }
+					  else 
+					  { ?>
 				<table class="table table-hover">
 					<tr>
 						<th>Card Type</th>
@@ -159,7 +112,8 @@
 						<th>Name on Card</th>
 						<th></th>
 					</tr>
-					<?php foreach($card_data['card_data'] as $row) { ?>
+					<?php foreach($card_data['card_data'] as $row) 
+						  { ?>
 					<tr>
 						<td><?php echo $row['card_type']; ?></td>
 						<td><?php echo $row['card_number']; ?></td>
@@ -167,7 +121,7 @@
 						<td><?php echo $data['user_data']['name']; ?></td>
 						<td><button  class="btn btn-sm btn-primary btn-block" type="submit" onclick="document.getElementById('phase').value = 'delete';">Delete</button></tr>
 					<?php }
-					}?>
+					  }?>
 				</table>
 			</div>
 		</div>
@@ -186,9 +140,10 @@
             <input class="form-control" type="text" name="expiration" placeholder="Card Expiration (mm/yy)" value="<?php echo $submitted_expiration?>" /> 
             <input class="form-control" type="text" name="name" placeholder="Name on Card" value="<?php echo $data['user_data']['name'] ?>"/>
             <br />
-            <button  class="btn btn btn-primary btn-block" type="submit" hr="../user/editCard.php">Add Card</button>
+            <button  class="btn btn btn-primary btn-block" type="submit" >Add Card</button>
         </form>
       </div>
+	</div>
 <?php}
 
 require_once("../inc/footer.php"); ?>
