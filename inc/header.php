@@ -43,6 +43,14 @@ if (strpos($_SERVER['PHP_SELF'], '/shop/') !== FALSE ||
 
     <!-- Bootstrap core CSS -->
     <link href="<?php echo $path; ?>inc/css/bootstrap.min.css" rel="stylesheet">
+	
+	<style type="text/css">
+	@import url(http://fonts.googleapis.com/css?family=Offside);
+
+	.navbar-brand {
+		font-family: 'Offside', cursive;
+	}
+	</style>
 
     <!-- Custom styles for this template -->
     <link href="<?php echo $path; ?>inc/css/jumbotron.css" rel="stylesheet">
