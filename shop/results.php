@@ -140,7 +140,7 @@
 			</select><br />
 			<input type='radio' name='sort_dir' value='asc' <?php echo ($sortDir == 'asc' ? "checked" : '') ?> /> Ascending<br />
 			<input type='radio' name='sort_dir' value='desc' <?php echo ($sortDir == 'desc' ? "checked" : '') ?> /> Descending</p>
-			<button type="submit" class="">Go</button>  
+			<button type="submit" class="btn btn-sm btn-primary">Go</button>  
 		</form> 
 		
 		
