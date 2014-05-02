@@ -1,4 +1,73 @@
 SET storage_engine=INNODB;
+SET GLOBAL event_scheduler = ON;
+
+CREATE DATABASE IF NOT EXISTS eauction;
+USE eauction;
+
+DROP TABLE IF EXISTS addresses;
+DROP TABLE IF EXISTS social_media;
+DROP TABLE IF EXISTS people;
+DROP TABLE IF EXISTS companies;
+DROP TABLE IF EXISTS items_in_categories;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS items_with_keywords;
+DROP TABLE IF EXISTS keywords;
+DROP TABLE IF EXISTS item_pictures;
+DROP TABLE IF EXISTS ratings;
+DROP TABLE IF EXISTS won_items;
+DROP TABLE IF EXISTS bids;
+DROP TABLE IF EXISTS credit_cards;
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS users;
+DROP PROCEDURE IF EXISTS proc_endAuction;
+
+DELIMITER //
+CREATE PROCEDURE `proc_endAuction` (IN endedauc_id INT)
+BEGIN
+   DECLARE res_price, max_bid, bidid, bid_count, bin_count INT;
+   
+   SELECT COUNT(*) INTO bid_count
+   FROM bids 
+   WHERE item_id = endedauc_id;
+   
+   IF bid_count > 0 THEN
+      SELECT reserve_price INTO res_price
+      FROM items 
+      WHERE item_id = endedauc_id;
+	  
+	  SELECT COUNT(*) INTO bin_count
+	  FROM bids
+	  WHERE item_id = endedauc_id 
+	  AND bid_type = 'buy-it-now';
+      
+      IF bin_count > 0 THEN
+         SELECT bid_id INTO bidid 
+		 FROM bids 
+		 WHERE item_id = endedauc_id 
+		 AND bid_type = 'buy-it-now';
+		 
+		 INSERT INTO won_items (item_id, winning_bid, date_won) 
+         VALUES (endedauc_id, bidid, NOW());
+      ELSE
+         SELECT bid_id, price INTO bidid, max_bid
+		 FROM bids 
+		 WHERE item_id = endedauc_id 
+		 AND price = (SELECT MAX(price) FROM items WHERE item_id = endedauc_id);
+		 
+		 IF max_bid >= res_price THEN
+            INSERT INTO won_items (item_id, winning_bid, date_won) 
+            VALUES (endedauc_id, bidid, NOW());
+         ELSE
+            DELETE FROM items 
+            WHERE item_id = endedauc_id;
+         END IF;
+      END IF;
+   ELSE
+      DELETE FROM items 
+      WHERE item_id = endedauc_id;
+   END IF;
+END //
+DELIMITER ;
 
 CREATE TABLE users (
     user_id INTEGER AUTO_INCREMENT,
@@ -12,6 +81,7 @@ CREATE TABLE users (
     public_location VARCHAR(255),
     url TEXT,
     user_type ENUM('person', 'company'),
+    `admin` TINYINT(1) DEFAULT 0,
     PRIMARY KEY (user_id)
 );
 
@@ -172,17 +242,17 @@ CREATE TABLE won_items (
         ON DELETE NO ACTION
 );
 
-INSERT INTO users (username, password, salt, name, email, phone_number, description, public_location, url, user_type) VALUES
-('zdeer1', 'b069bcb42b80b00a26a366ea6080928ea0e093c4cc9b30db043820c1c5208e97', '939730c1b8572dc', 'Zachary Deering', 'zpd5008@psu.edu', '8144040751', '', '', '', 'person'), /*user_id = 1 */
-('tjbyrne', '0620dc9dfeb19183b7900c2300e383ce59e8a5107920633279d96828eefde256', '247bc13449b21fdd', 'Tom Byrne', 'tjbyrne2@gmail.com', '5164245787', '', '', '', 'person'), /* user_id = 2 */
-('jmeanor', 'b794613dc6b7f87eb041a6b7f9ac8f01679695640b63941058e8fc269aec0664', '5f627b183bbb3703', 'John Meanor', 'jmeanor@gmail.com', '7246018842', '', '', '', 'person'), /* user_id = 3 */
-('lkeniston', 'af55358a59b0c488163a9bff7c7e688ec4efc0540bb361898ff6829a09f97f17', 'bf1036950723763', 'Luke Keniston', 'lkeniston@gmail.com', '9739608048', '', '', '', 'person'), /* user_id = 4 */
-('beckymapes', '47127b16141afeb74245b7c2fdeb2e9c5d00af1d4aeacfeba0ce80673fc74d86', '2b863f705537feac', 'Becky Mapes', 'bmapes@psu.edu', '8141234567', '', '', '', 'person'), /* user_id = 5 */
-('gad157', '68e573b8a62e00330ce69fb6da4bb96eaebc71bddf2b62e8f5863438b2174153', '7ed9bc011cb5b561', 'Greg Drane', 'gad157@psu.edu', '8147771234', '', '', '', 'person'), /* user_id = 6 */
-('psu', '1407f6d84960d9a783ad6409985b38f50c32f3bbbaa2e66c71e3f3234ca5d1a0', '712300c35f6f1b18', 'Pennsylvania State University', 'eauction@psu.edu', '8148651234', 'The Pennsylvania State University is a public land-grant university in Pennsylvania', 'University Park, PA', 'http://www.psu.edu', 'company'), /* user_id = 7 */
-('lhmartin', '05d6763da8ed6119eb367d7dd2f93f5ddec7b9a1afa6bf597c8d281cda7060b2', '7e8990d753ccf84e', 'Lockheed Martin', 'eauction@lockheed.com', '9995551234', 'Lockheed Martin is a government contractor', 'Washington, D.C.', 'http://www.lockheed.com/', 'company'), /* user_id = 8 */
-('bsclassic', '9fa9573c0558e8b98a9928b2ce5895b8b02d376002e2f68316961615a64d5be3', '38db6e20c9d7d36', 'Blue Sapphire Classic', 'bluesapphireclassic@gmail.com', '9995551235', 'The Blue Sapphire Classic is a charity organization that funds a scholarship for the Feature Twirler of the Penn State Blue Band', 'University Park, PA', 'http://blueband.psu.edu/bsc/', 'company'), /* user_id = 9 */
-('shweelz', 'cf085414d11cb6140788a1406db14f18701e23562e66b078cb9cc5a59479f7c4', '12a372be1e03d7eb', 'Shane Besong', 'shweelz@aol.com', '8144445555', '', '', '', 'person'); /* user_id = 10 */
+INSERT INTO users (username, password, salt, name, email, phone_number, description, public_location, url, user_type, `admin`) VALUES
+('zdeer1', 'b069bcb42b80b00a26a366ea6080928ea0e093c4cc9b30db043820c1c5208e97', '939730c1b8572dc', 'Zachary Deering', 'zpd5008@psu.edu', '8144040751', '', '', '', 'person', '1'), /*user_id = 1 */
+('tjbyrne', '0620dc9dfeb19183b7900c2300e383ce59e8a5107920633279d96828eefde256', '247bc13449b21fdd', 'Tom Byrne', 'tjbyrne2@gmail.com', '5164245787', '', '', '', 'person', '1'), /* user_id = 2 */
+('jmeanor', 'b794613dc6b7f87eb041a6b7f9ac8f01679695640b63941058e8fc269aec0664', '5f627b183bbb3703', 'John Meanor', 'jmeanor@gmail.com', '7246018842', '', '', '', 'person', '1'), /* user_id = 3 */
+('lkeniston', 'af55358a59b0c488163a9bff7c7e688ec4efc0540bb361898ff6829a09f97f17', 'bf1036950723763', 'Luke Keniston', 'lkeniston@gmail.com', '9739608048', '', '', '', 'person', '1'), /* user_id = 4 */
+('beckymapes', '47127b16141afeb74245b7c2fdeb2e9c5d00af1d4aeacfeba0ce80673fc74d86', '2b863f705537feac', 'Becky Mapes', 'bmapes@psu.edu', '8141234567', '', '', '', 'person', '0'), /* user_id = 5 */
+('gad157', '68e573b8a62e00330ce69fb6da4bb96eaebc71bddf2b62e8f5863438b2174153', '7ed9bc011cb5b561', 'Greg Drane', 'gad157@psu.edu', '8147771234', '', '', '', 'person', '0'), /* user_id = 6 */
+('psu', '1407f6d84960d9a783ad6409985b38f50c32f3bbbaa2e66c71e3f3234ca5d1a0', '712300c35f6f1b18', 'Pennsylvania State University', 'eauction@psu.edu', '8148651234', 'The Pennsylvania State University is a public land-grant university in Pennsylvania', 'University Park, PA', 'http://www.psu.edu', 'company', '0'), /* user_id = 7 */
+('lhmartin', '05d6763da8ed6119eb367d7dd2f93f5ddec7b9a1afa6bf597c8d281cda7060b2', '7e8990d753ccf84e', 'Lockheed Martin', 'eauction@lockheed.com', '9995551234', 'Lockheed Martin is a government contractor', 'Washington, D.C.', 'http://www.lockheed.com/', 'company', '0'), /* user_id = 8 */
+('bsclassic', '9fa9573c0558e8b98a9928b2ce5895b8b02d376002e2f68316961615a64d5be3', '38db6e20c9d7d36', 'Blue Sapphire Classic', 'bluesapphireclassic@gmail.com', '9995551235', 'The Blue Sapphire Classic is a charity organization that funds a scholarship for the Feature Twirler of the Penn State Blue Band', 'University Park, PA', 'http://blueband.psu.edu/bsc/', 'company', '0'), /* user_id = 9 */
+('shweelz', 'cf085414d11cb6140788a1406db14f18701e23562e66b078cb9cc5a59479f7c4', '12a372be1e03d7eb', 'Shane Besong', 'shweelz@aol.com', '8144445555', '', '', '', 'person', '0'); /* user_id = 10 */
 
 INSERT INTO addresses (user_id, street, city, state, zip) VALUES 
 ('1', '127 N. Sparks St. Apt. 8', 'State College', 'PA', '16801'),
@@ -224,16 +294,83 @@ INSERT INTO companies (user_id, revenue, category, point_of_contact) VALUES
 ('9', '11000.00', 'Non-Profit', 'PJ Maierhofer');
 
 INSERT INTO items (seller_id, name, description, starting_price, buy_it_now_price, reserve_price, start_time, location, url, template) VALUES
-('1', 'Plush Leather Couch', 'A black leather sectional with little wear and tear. Only 6 months old!', '250.00', '0.00', '250.00', '2014-03-14 05:30:22 PM', 'State College, PA', '', '1'), /* item_id = 1, COMPLETED */
-('1', 'iPod Touch 2nd Gen', 'Barely used iPod Touch 2nd Generation (2009). 32 GB of storage, rear camera, and working home and lock buttons!', '50.00', '150.00', '75.00', '2014-04-02 01:22:15 AM', 'State College, PA', '', '2'), /* item_id = 2 */
-('5', 'Timex Watch', 'Antique Timex Watch. $750.00 retail in 1922.', '500.00', '900.00', '500.00', '2014-03-10 12:35:33 PM', 'Richmond, VA', 'http://www.beckyswatches.com', '3'), /* item_id = 3, COMPLETED */
-('5', 'Timex Watch', 'Antique Timex Watch. $750.00 retail in 1922.', '500.00', '900.00', '500.00', '2014-04-10 12:35:33 PM', 'Richmond, VA', 'http://www.beckyswatches.com', '3'), /* item_id = 4 */
-('5', 'Timex Watch', 'Antique Timex Watch. $750.00 retail in 1922.', '500.00', '900.00', '500.00', '2014-04-10 12:35:33 PM', 'Richmond, VA', 'http://www.beckyswatches.com', '3'), /* item_id = 5 */
-('7', 'Joe Paterno Statue', 'Bronze statue of an old, shamed coach. Must pick up.', '1500.00', '0.00', '1575.33', '2014-04-03 12:36:27 AM', 'University Park, PA', 'http://www.psu.edu', '2'), /* item_id = 6 */
-('7', 'Billeve Tshirt', 'White tshirt that says "Billeve" on it.', '3.00', '3.00', '3.00', '2014-04-01 06:35:00 PM', 'University Park, PA', 'http://www.psu.edu', '1'), /* item_id = 7 */
-('8', 'A2100 Geosynchronous Satellite', 'Lockheed Martin is at the forefront of the space-based telecommunications revolution. Leading the way is our A2100, one of the most powerful flight-proven commercial spacecraft currently available. This modular geosynchronous satellite has a design life of 15 years and a flexible payload capacity ideally suited to meet the demand for commercial space systems well into the 21st century—a demand driven by growth in mobile telephony, business services, direct broadcast, internet, multimedia and broadband services.', '500000.00', '0.00', '500000.00', '2014-04-04 10:00:00 AM', 'Ft. Lauderdale, FL', 'http://www.lockheedmartin.com/us/products/a2100.html', '1'), /* item_id = 8 */
-('9', 'Signed Photo of Matt Freeman', 'Photo of outgoing Blue Band Feature Twirler Matt Freeman. Signed by Matt himself!', '10.00', '15.00', '11.00', '2014-04-08 11:35:23 AM', 'State College, PA', 'http://blueband.psu.edu/bsc/', '3'), /* item_id = 9 */
-('9', 'Signed Photo of Rachel Reiss', 'Photo of incoming Blue Band Feature Twirler Rachel Reiss. Signed by Rachel herself!', '10.00', '15.00', '11.00', '2014-04-08 11:35:23 AM', 'State College, PA', 'http://blueband.psu.edu/bsc/', '3'); /* item_id = 10 */
+('1', 'Plush Leather Couch', 'A black leather sectional with little wear and tear. Only 6 months old!', '250.00', '0.00', '250.00', '2014-03-14 17:30:22', 'State College, PA', '', '1'), /* item_id = 1, COMPLETED */
+('1', 'iPod Touch 2nd Gen', 'Barely used iPod Touch 2nd Generation (2009). 32 GB of storage, rear camera, and working home and lock buttons!', '50.00', '150.00', '75.00', '2014-04-24 01:22:15', 'State College, PA', '', '2'), /* item_id = 2 */
+('5', 'Timex Watch', 'Antique Timex Watch. $750.00 retail in 1922.', '500.00', '900.00', '500.00', '2014-03-10 12:35:33', 'Richmond, VA', 'http://www.beckyswatches.com', '3'), /* item_id = 3, COMPLETED */
+('5', 'Timex Watch', 'Antique Timex Watch. $750.00 retail in 1922.', '500.00', '900.00', '500.00', '2014-04-20 12:35:33', 'Richmond, VA', 'http://www.beckyswatches.com', '3'), /* item_id = 4 */
+('5', 'Timex Watch', 'Antique Timex Watch. $750.00 retail in 1922.', '500.00', '900.00', '500.00', '2014-04-20 12:35:33', 'Richmond, VA', 'http://www.beckyswatches.com', '3'), /* item_id = 5 */
+('7', 'Joe Paterno Statue', 'Bronze statue of an old, shamed coach. Must pick up.', '1500.00', '0.00', '1575.33', '2014-04-23 00:36:27', 'University Park, PA', 'http://www.psu.edu', '2'), /* item_id = 6 */
+('7', 'Billieve Tshirt', 'White tshirt that says "Billieve" on it.', '3.00', '3.00', '3.00', '2014-04-18 18:35:00', 'University Park, PA', 'http://www.psu.edu', '1'), /* item_id = 7 */
+('8', 'A2100 Geosynchronous Satellite', 'Lockheed Martin is at the forefront of the space-based telecommunications revolution. Leading the way is our A2100, one of the most powerful flight-proven commercial spacecraft currently available. This modular geosynchronous satellite has a design life of 15 years and a flexible payload capacity ideally suited to meet the demand for commercial space systems well into the 21st century-a demand driven by growth in mobile telephony, business services, direct broadcast, internet, multimedia and broadband services.', '500000.00', '0.00', '500000.00', '2014-04-21 10:00:00', 'Ft. Lauderdale, FL', 'http://www.lockheedmartin.com/us/products/a2100.html', '1'), /* item_id = 8 */
+('9', 'Signed Photo of Matt Freeman', 'Photo of outgoing Blue Band Feature Twirler Matt Freeman. Signed by Matt himself!', '10.00', '15.00', '11.00', '2014-04-19 11:35:23', 'State College, PA', 'http://blueband.psu.edu/bsc/', '3'), /* item_id = 9 */
+('9', 'Signed Photo of Rachel Reiss', 'Photo of incoming Blue Band Feature Twirler Rachel Reiss. Signed by Rachel herself!', '10.00', '15.00', '11.00', '2014-04-19 11:35:23', 'State College, PA', 'http://blueband.psu.edu/bsc/', '3'); /* item_id = 10 */
+
+DELIMITER //
+DROP EVENT IF EXISTS item_event_2 //
+CREATE EVENT item_event_2
+   ON SCHEDULE AT '2014-05-08 01:22:15'
+   DO
+      BEGIN
+         CALL proc_endAuction(2);
+      END //
+
+DROP EVENT IF EXISTS item_event_4 //
+CREATE EVENT item_event_4
+   ON SCHEDULE AT '2014-05-04 12:35:33'
+   DO
+      BEGIN
+         CALL proc_endAuction(4);
+      END //
+   
+DROP EVENT IF EXISTS item_event_5 //
+CREATE EVENT item_event_5
+   ON SCHEDULE AT '2014-05-04 12:35:33'
+   DO
+      BEGIN
+         CALL proc_endAuction(5);
+      END //
+   
+DROP EVENT IF EXISTS item_event_6 //
+CREATE EVENT item_event_6
+   ON SCHEDULE AT '2014-05-07 00:36:27'
+   DO
+      BEGIN
+         CALL proc_endAuction(6);
+      END //
+
+DROP EVENT IF EXISTS item_event_7 //      
+CREATE EVENT item_event_7
+   ON SCHEDULE AT '2014-05-02 18:35:00'
+   DO
+      BEGIN
+         CALL proc_endAuction(7);
+      END //
+
+DROP EVENT IF EXISTS item_event_8 //      
+CREATE EVENT item_event_8
+   ON SCHEDULE AT '2014-05-05 10:00:00'
+   DO
+      BEGIN
+         CALL proc_endAuction(8);
+      END //
+
+DROP EVENT IF EXISTS item_event_9 //      
+CREATE EVENT item_event_9
+   ON SCHEDULE AT '2014-05-03 11:35:23'
+   DO
+      BEGIN
+         CALL proc_endAuction(9);
+      END //
+
+DROP EVENT IF EXISTS item_event_10 //      
+CREATE EVENT item_event_10
+   ON SCHEDULE AT '2014-05-03 11:35:23'
+   DO
+      BEGIN
+         CALL proc_endAuction(10);
+      END //
+
+DELIMITER ;
 
 INSERT INTO categories (name, parent) VALUES 
 ('root', '1'), /* category_id = 1, root */
@@ -293,17 +430,29 @@ INSERT INTO items_with_keywords (item_id, keyword) VALUES
 ('10', 'twirler'),
 ('10', 'picture');
 
-/* Will need to do pictures eventually, but we don't have any right now */
+INSERT INTO item_pictures (item_id, url) VALUES 
+('1', 'shop/images/1-couch.gif'),
+('2', 'shop/images/2-ipod1.jpg'),
+('2', 'shop/images/2-ipod2.jpg'),
+('3', 'shop/images/345-watch.jpg'),
+('4', 'shop/images/345-watch.jpg'),
+('5', 'shop/images/345-watch.jpg'),
+('6', 'shop/images/6-statue1.jpg'),
+('6', 'shop/images/6-statue2.jpg'),
+('7', 'shop/images/7-billieve.jpg'),
+('8', 'shop/images/8-sat.jpg'),
+('9', 'shop/images/9-matt.jpg'),
+('10', 'shop/images/10-rachel.jpg');
 
 INSERT INTO ratings (item_id, buyer_id, score, description, seller_response) VALUES 
 ('1', '3', '5.10', 'Item still hasn\'t shipped, two weeks later.', 'Your item will be shipped once it\'s done being restored.'),
 ('3', '1', '9.50', 'Couch was exactly as I expected. Love it!', '');
 
 INSERT INTO bids (item_id, card_id, bid_type, bid_datetime, price) VALUES
-('3', '1', 'buy-it-now', '2014-03-11 11:30:21 PM', '900.00'), /* bid_id = 1 */
-('1', '6', 'bid', '2014-03-15 12:30:35 AM', '250.00'), /* bid_id = 2 */
-('1', '3', 'bid', '2014-03-19 04:15:00 PM', '262.50'); /* bid_id = 3 */
+('3', '1', 'buy-it-now', '2014-03-11 23:30:21', '900.00'), /* bid_id = 1 */
+('1', '6', 'bid', '2014-03-15 00:30:35', '250.00'), /* bid_id = 2 */
+('1', '3', 'bid', '2014-03-19 16:15:00', '262.50'); /* bid_id = 3 */
 
 INSERT INTO won_items (item_id, winning_bid, date_won, item_received_date, item_sent_date, card_charged_date, check_mailed_date, successful_date) VALUES
-('1', '3', '2014-03-28 05:30:22 PM', '', '', '', '', ''),
-('3', '1', '2014-03-11 11:30:21 PM', '2014-03-13 05:22:00 PM', '2014-03-15 02:23:00 PM', '2014-03-14 10:00:00 AM', '2014-03-14 02:23:00 PM', '2014-03-15 02:30:00 PM');
+('1', '3', '2014-03-28 17:30:22', '', '', '', '', ''),
+('3', '1', '2014-03-11 23:30:21', '2014-03-13 17:22:00', '2014-03-15 14:23:00', '2014-03-14 10:00:00', '2014-03-14 14:23:00', '2014-03-15 14:30:00');
