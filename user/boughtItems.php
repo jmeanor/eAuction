@@ -9,7 +9,16 @@
 	
 	if(!empty($_POST))
 	{
+		$buyer_id = $_GET['id'];
 		$item_id = $_GET['iid'];
+		$score = floatval(trim($_POST['score']));
+		if($score > 10)
+			$score = 10;
+		elseif($score < 1)
+			$score = 1;
+		$feedback = $_POST['feedback'];
+		
+		submitRating($item_id, $buyer_id, $score, $feedback, $db);
 	}
 	
 	if (!empty($_GET['id'])) {

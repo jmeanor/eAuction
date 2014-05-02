@@ -7,7 +7,7 @@
 
     require_once("../inc/header.php");
 	$item_info = itemInfo($_GET['id'], $db);
-	$ratings_data = getRatingsData($_GET['id'], $db);
+	$ratings_data = ItemRatingsData($_GET['id'], $db);
 ?>
 
 <style type="text/css">
