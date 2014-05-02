@@ -105,25 +105,23 @@
   }
 </style>
 
-    <div class="container">
-	  <h1>Create an Auction</h1>
-      <button type="button" class="btn btn-sm btn-warning">Return to Home</button>
-    </div>
-
     <div class="container marketing">
 	  <body>
 	  <div class="container">
 	  <div class="row">
-
-	    <h1></h1>
-		<?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; ?>
+		  	<div class="col-lg-10">
+			  	<h1>Create an Auction</h1>
+		      	<p><a href="../home.php" class="btn btn-sm btn-warning">Return to Home</a></p>
+		      	<hr />
+				<?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; ?>
+	  		</div>
 	  </div>
 
 	  <form id="newitemform" class="form-create" action="newAuction.php" method="POST" enctype="multipart/form-data"> 
 	    <div class="alert alert-info">All fields are required.</div>
         <p>Item Name: <input class="form-control" type="text" name="item_name" placeholder="Item Name"  value="<?php echo $submitted_item_name; ?>"/> </p>
         <p>Item Description: <input class="form-control" type="text" name="description" placeholder="Item Description" value="<?php echo $submitted_item_description; ?>" /> </p>
-        <p>Add keywords to maximize your auction viewership.</p>
+        <p>Add keywords to maximize your auction viewership. [Select multiple keywords by holding control (command on Mac), and clicking.]</p>
         	<p><select required name="keywords[]" class="form-control" multiple size="6" >
         		<?php foreach ($keywords as $keyword) { ?>
         		<option value="<?php echo $keyword['keyword']; ?>"><?php echo $keyword['keyword']; ?></option>
@@ -137,9 +135,9 @@
         <p>Location of Item: <input class="form-control"  type="text" name="location" placeholder="Location" value="<?php echo $submitted_location; ?>" /> </p>
 		<p>URL for Item: <input class="form-control" type="url" name="url" placeholder="URL" value="<?php echo $submitted_url; ?>" /> </p>
 		<p>Template for Item</p>
-		<p><input type="radio" name="template" value="1"> 1</p>
-		<p><input type="radio" name="template" value="2"> 2</span></p>
-		<p><input type="radio" name="template" value="3"> 3</span></p>
+		<p><input type="radio" name="template" value="1"> 1 - Classic</p>
+		<p><input type="radio" name="template" value="2"> 2 - Space Jam</span></p>
+		<p><input type="radio" name="template" value="3"> 3 - Elegant</span></p>
 		<p>Upload Pictures!</p>
 		<p><input type="file" class="form-control" name="pic" accept="image/*" value="<?php echo $submitted_picture;?>"></p>
 
