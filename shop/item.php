@@ -160,7 +160,7 @@ function slideshowBack()
 		  }
 		  ?>
           <h1></h1>
-		  <?php if ($check['success'] == false && ($data['user_data']['user_id'] != $test['item_data']['user_id']))
+		  <?php if ($check['success'] == false && ($data['user_data']['user_id'] != $test['item_data']['seller_id']))
 		  {?>
 			<center><a class="btn btn-default btn-xs" class="btn btn-primary" href="../shop/bidding.php?id=<?php echo $item_id ?>" role="button">Place a Bid or Buy It Now! &raquo;</a></center>
           <?php

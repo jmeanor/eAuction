@@ -809,11 +809,7 @@
 		$data['success'] = false;
 
 		$query = " 
-<<<<<<< HEAD
-            SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.user_id, u.username, u.public_location
-=======
             SELECT i.item_id, i.seller_id, i.name, i.description, i.starting_price, i.buy_it_now_price, i.reserve_price, i.location, u.username, u.public_location, i.template 
->>>>>>> 7e9ce9393c76e3e4d3a4286298ded23ed0854a75
             FROM items i, users u
             WHERE i.item_id = :item_id
 			AND i.seller_id = u.user_id
