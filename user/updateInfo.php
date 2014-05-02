@@ -9,6 +9,7 @@
       $data = getProfileData($_SESSION['user']['user_id'], $db);
 	  $item_data = getItemData($_SESSION['user']['user_id'], $db);
     }  
+  $submitted_name = $data['user_data']['name'];
   $submitted_email = $data['user_data']['email'];
   $submitted_phone = $data['user_data']['phone_number'];
   $submitted_description=$data['user_data']['description'];
@@ -22,13 +23,22 @@
         // variable used to determine if form is okay to submit to API
         $fields_ok = true;
 
+		if(empty($_POST['name']))
+		{
+			$_POST['message']['content'] = "Please enter a valid name.";
+			$_POST['message']['type'] = "danger";
+			$fields_ok = false;
+		}
+		
         if(empty($_POST['phone_number'])) 
         { 
             $_POST['message']['content'] = "Please enter a valid phone number using only numbers."; 
             $_POST['message']['type'] = "danger";
             $fields_ok = false;
         } 
-        else {
+		
+        else 
+		{
           $phone = preg_replace('/[^0-9]/', '', $_POST['phone_number']);
           if(strlen($phone) !== 10) {
               $_POST['message']['content'] = "Please enter a valid phone number using only numbers."; 
@@ -36,24 +46,7 @@
               $fields_ok = false;
           }
         }
-		
-        if(empty($_POST['description']) || strlen($_POST['description']) < 1 ) 
-        { 
-            $_POST['message']['content'] = "You must enter a personal statement."; 
-            $_POST['message']['type'] = "danger";
-            $fields_ok = false;
-        } else {
-            $submitted_description=$_POST['description'];                
-        }
 
-        if(empty($_POST['public_location'])) 
-        { 
-            $_POST['message']['content'] = "You must enter the location of your company."; 
-            $_POST['message']['type'] = "danger";
-            $fields_ok = false;
-        } else {
-            $submitted_public_loc=$_POST['public_location'];                
-        }
         if(!filter_var($_POST['url'], FILTER_VALIDATE_URL)) 
         { 
             $_POST['message']['content'] = "Please enter a company URL with the full path. Ex: http://www.psu.edu"; 
@@ -77,7 +70,7 @@
 
         if($fields_ok) {
             
-            $result = updateUser($data['user_data']['user_id'], $_POST['email'], $_POST['phone_number'], $_POST['description'], $_POST['public_location'], $_POST['url'], $db);
+            $result = updateUser($data['user_data']['user_id'], $_POST['name'], $_POST['email'], $_POST['phone_number'], $_POST['description'], $_POST['public_location'], $_POST['url'], $db);
 
               if ($result['success'])
               {
@@ -87,6 +80,7 @@
               else 
               {
                 // Fill in the username field that the user tried to login with
+				$submitted_name=$_POST['name'];
                 $submitted_email=$_POST['email'];
                 $submitted_phone=$_POST['phone'];
                 $submitted_phone=$_POST['description'];
@@ -147,15 +141,18 @@
       <div class="container">
         <div class="row">
           <h1></h1>
+          <?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; ?>
         </div>
+
 
         <form id="updateform" class="form-signin" action="updateInfo.php" method="POST"> 
           <h2 class="form-signin-heading">Update Information</h2>
+            <input class="form-control" type="text" name="name" placeholder="Name" value="<?php echo $submitted_name?>" />
             <input class="form-control" type="text" name="email" placeholder="Email" value="<?php echo $submitted_email?>" />
             <input class="form-control" type="text" name="phone_number" placeholder="Phone Number" value="<?php echo $submitted_phone?>" /> 
-            <textarea class="form-control" name="description" placeholder="Enter a brief personal statement here." value="<?php echo $submitted_description ?>"></textarea>
+            <input class="form-control" type="text" name="description" placeholder="Enter a brief personal statement here." value="<?php echo $submitted_description ?>"/>
             <input class="form-control" type="text" name="public_location" placeholder="University Park, PA" value="<?php echo $submitted_public_loc ?>" />
-            <input class="form-control" type="text" name="url" placeholder="http://www.psu.edu" value="<?php echo $submitted_url ?>" /></p>
+            <input class="form-control" type="text" name="url" placeholder="website (http://www.psu.edu)" value="<?php echo $submitted_url ?>" /></p>
             <br />
             <button  class="btn btn-lg btn-primary btn-block" type="submit" hr="../user/profile.php">Update</button>
         </form>
