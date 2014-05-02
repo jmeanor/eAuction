@@ -35,6 +35,15 @@
 		else {
             $submitted_sm_type=$_POST['sm_type'];                
         }
+		
+		$sm_check = checkSM($_POST['username'], $_POST['sm_type'], $db);
+		
+		if ($sm_check['success'] == true)
+		{
+			$_POST['message']['content'] = "There is already a social media account with this name and type.";
+			$_POST['message']['type'] = "danger";
+			$fields_ok = false;
+		}
 
         if($fields_ok) {
             
@@ -104,7 +113,9 @@
       <div class="container">
         <div class="row">
           <h1></h1>
+          <?php if (isset($_POST['message']) && $_POST['message']['type'] == "danger") echo '<div class="alert alert-danger">'.$_POST['message']['content'].'</div>'; ?>
         </div>
+      </div>
 
         <form id="addform" class="form-signin" action="addSocialMedia.php" method="POST"> 
           <h2 class="form-signin-heading">Add Social Media Username</h2>

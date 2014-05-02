@@ -68,14 +68,14 @@
 			if ($sm_info['sm_type'] == "tw")
 			{
 			?>
-				<p><b>Twitter: </b> <?php echo $sm_info['username']?></p>
+				<p><b>Twitter: </b> <a href="http://www.twitter.com/<?php echo $sm_info['username']?>">@<?php echo $sm_info['username']?></a></p>
 			<?php
 			}
 			
 			else if ($sm_info['sm_type'] == "fb")
 			{
 			?>
-				<p><b>Facebook: </b> <?php echo $sm_info['username']?></p>
+				<p><b>Facebook: </b> <a href="http://www.facebook.com/<?php echo $sm_info['username']?>"><?php echo $sm_info['username']?></a></p>
 		<?php
 			}
 		}

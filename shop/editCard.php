@@ -21,12 +21,10 @@
 	
 	$card_data = getCards($data['user_data']['user_id'], $db);
 
-/*   	if(isset($_POST['phase']))	
+  	if(isset($_POST['phase']))	
 		$phase = $_POST['phase'];
-	elseif($is_over['success'])
-		$phase = 'bought';
 	else
-		$phase = ''; */
+		$phase = '';
 	
     // If the user has entered form information to log in with.
     if (!empty($_POST))
@@ -75,10 +73,75 @@
           }
     }
 	
-
+	if($phase == 'bid')
+	{
+		$user_bid = floatval(str_replace('$', '', trim($_POST['bid'])));
+		$card_id = $_POST['card'];
+		if($user_bid < $min_bid)
+		{
+			$message = "You must enter a valid bid that is greater or equal to the minimum bid, $" . number_format($min_bid, 2) . "!";
+			$success = "danger";
+		}
+		else
+		{
+			$query = "INSERT INTO bids (item_id, card_id, bid_type, bid_datetime, price) VALUES
+					  (:item_id, :card_id, :bid_type, NOW(), :price)";
+			$query_params = array(':item_id' => $item_id,
+								  ':card_id' => $card_id,
+								  ':bid_type' => 'bid',
+								  ':price' => $user_bid);
+								  
+			try 
+			{ 
+				// Execute the query against the database 
+				$stmt = $db->prepare($query); 
+				$result = $stmt->execute($query_params); 
+			} 
+			catch(PDOException $ex) 
+			{ 
+				die($ex);
+			}
+			
+			$highest_bid = highestBid($item_id, $db);
+			$min_bid = floatval($highest_bid) * 1.05;
+			$message = "Thank you for bidding!";
+		}
+		
+		$phase = '';
+	}
+	elseif($phase == 'buy')
+	{
+		$card_id = $_POST['card'];
+		$query = "INSERT INTO bids (item_id, card_id, bid_type, bid_datetime, price) VALUES
+				  (:item_id, :card_id, :bid_type, NOW(), :price)";
+		$query_params = array(':item_id' => $item_id,
+							  ':card_id' => $card_id,
+							  ':bid_type' => 'buy-it-now',
+							  ':price' => $item['item_data']['buy_it_now_price']);
+							  
+		try 
+		{ 
+			// Execute the query against the database 
+			$stmt = $db->prepare($query); 
+			$result = $stmt->execute($query_params); 
+		} 
+		catch(PDOException $ex) 
+		{ 
+			die($ex);
+		}
+		
+		$query = "CALL proc_endAuction($item_id)";
+		$db->exec($query);
+		
+		$query = "DROP EVENT IF EXISTS item_event_$item_id";
+		$db->exec($query);
+		
+		$phase = 'bought';
+	}
+	
+	if($phase == '')
+	{
 ?>
-</head>
-    <body>
       <div class="container">
         <div class="row">
           <h1></h1>
@@ -102,8 +165,7 @@
 						<td><?php echo $row['card_number']; ?></td>
 						<td><?php echo $row['expiration']; ?></td>
 						<td><?php echo $data['user_data']['name']; ?></td>
-						<td><button class="btn btn-sm btn-primary btn-block" type="submit" hr="../user/editCard.php">Delete</button>
-					</tr>
+						<td><button  class="btn btn-sm btn-primary btn-block" type="submit" onclick="document.getElementById('phase').value = 'delete';">Delete</button></tr>
 					<?php }
 					}?>
 				</table>
@@ -127,5 +189,6 @@
             <button  class="btn btn btn-primary btn-block" type="submit" hr="../user/editCard.php">Add Card</button>
         </form>
       </div>
-    </body>
-</html>
+<?php}
+
+require_once("../inc/footer.php"); ?>
