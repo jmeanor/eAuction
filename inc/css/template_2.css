@@ -1,7 +1,13 @@
-h1, h2, h3, h4, p, a {
-	font-family: "Comic Sans MS";
-	font-weight: 1000;
+h1 {
+	font-family: 'Comic Sans MS', cursive;
 	color: red;
+	text-shadow: 1px 1px white, 2px 2px white, 3px 3px white;
+}
+
+h2, h3, h4, p, a {
+	font-family: 'Comic Sans MS', cursive;
+	color: red;
+	text-shadow: 1px 1px white;
 }
 
 body {
@@ -10,4 +16,5 @@ body {
 
 .badge {
 	background-color: red;
+	text-shadow: none;
 }
