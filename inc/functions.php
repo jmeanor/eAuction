@@ -1318,7 +1318,7 @@
 	  return $item_result;
 }
 
-function submit_rating($item_id, $buyer_id, $score, $description, $db)
+function submitRating($item_id, $buyer_id, $score, $description, $db)
 	{
 	  $item_result = array('success' => false);
 	   
@@ -1327,38 +1327,23 @@ function submit_rating($item_id, $buyer_id, $score, $description, $db)
 	  // protect against SQL injection attacks. 
 	  $query = " 
 	      INSERT INTO ratings (
-			  seller_id,
-	          name, 
-	          description, 
-	          starting_price, 
-	          buy_it_now_price,
-			  reserve_price,
-	          location,
-			  url,
-			  template
+			  item_id,
+			  buyer_id,
+			  score,
+			  description
 			  
 	      ) VALUES ( 
-			  :user_id,
-	          :item_name, 
-	          :item_description, 
-	          :starting_price, 
-	          :buy_it_now_price,
-			  :reserve_price,
-	          :location,
-			  :url,
-			  :template
+			  :item_id,
+	          :buyer_id, 
+	          :score, 
+	          :description
 	      ) 
 	  "; 
 	  $query_params = array( 
-		  ':user_id' => $user_id,
-	      ':item_name' => $item_name, 
-	      ':item_description' => $item_description, 
-	      ':starting_price'=> $starting_price,
-	      ':buy_it_now_price'=> $buy_it_now_price,
-		  ':reserve_price'=> $reserve_price,
-	      ':location'=> $location,
-		  ':url'=> $url,
-		  ':template'=> $template
+		  ':item_id' => $item_id,
+	      ':buyer_id' => $buyer_id, 
+		  ':score' => $score,
+	      ':description' => $description
 	  ); 
 	   
 	  try 
