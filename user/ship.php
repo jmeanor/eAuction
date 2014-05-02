@@ -284,7 +284,7 @@
          
          $ready_success = true;
          
-         if($row['item_received_date'] != $null_date_string || $row['item_received_date'] != ''  || $row['item_received_date'] != null)
+         if($row['item_received_date'] != $null_date_string && $row['item_received_date'] != ''  && $row['item_received_date'] != null)
          {
             $item_rdate = date('D, M. j, Y h:i:s A', strtotime($row['item_received_date']));
             $ready_success = $ready_success & true;
@@ -295,7 +295,7 @@
             $ready_success = $ready_success & false;
          }
             
-         if($row['item_sent_date'] != $null_date_string || $row['item_sent_date'] != ''  || $row['item_sent_date'] != null)
+         if($row['item_sent_date'] != $null_date_string && $row['item_sent_date'] != ''  && $row['item_sent_date'] != null)
          {
             $item_sdate = date('D, M. j, Y h:i:s A', strtotime($row['item_sent_date']));
             $ready_success = $ready_success & true;
@@ -306,7 +306,7 @@
             $ready_success = $ready_success & false;
          }
             
-         if($row['card_charged_date'] != $null_date_string || $row['card_charged_date'] != '' || $row['card_charged_date'] != null)
+         if($row['card_charged_date'] != $null_date_string && $row['card_charged_date'] != '' && $row['card_charged_date'] != null)
          {
             $card_cdate = date('D, M. j, Y h:i:s A', strtotime($row['card_charged_date']));
             $ready_success = $ready_success & true;
@@ -317,7 +317,7 @@
             $ready_success = $ready_success & false;
          }
          
-         if($row['check_mailed_date'] != $null_date_string || $row['check_mailed_date'] != '' || $row['check_mailed_date'] != null)
+         if($row['check_mailed_date'] != $null_date_string && $row['check_mailed_date'] != '' && $row['check_mailed_date'] != null)
          {
             $card_mdate = date('D, M. j, Y h:i:s A', strtotime($row['check_mailed_date']));
             $ready_success = $ready_success & true;
@@ -328,7 +328,7 @@
             $ready_success = $ready_success & false;
          }   
          
-         if($row['successful_date'] != $null_date_string || $row['successful_date'] != '' || $row['successful_date'] != null)
+         if($row['successful_date'] != $null_date_string && $row['successful_date'] != '' && $row['successful_date'] != null)
             $success_date = date('D, M. j, Y h:i:s A', strtotime($row['successful_date']));
          else  
             $success_date = false;
